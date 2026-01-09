@@ -1,0 +1,13 @@
+# Python
+venv/
+__pycache__/
+*.pyc
+.env
+
+# Lean 4 / Lake
+.lake/
+lake-packages/
+lakefile.olean
+
+# System
+.DS_Store
