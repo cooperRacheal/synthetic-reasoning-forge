@@ -80,8 +80,8 @@ cd lean && lake build           # Build Lean project
 - [x] Lean 4 toolchain initialized (`lake init`)
 - [x] `lean-toolchain` pinned to v4.26.0
 - [x] `CLAUDE.md` governance document
-- [ ] `src/logic/__init__.py` created
-- [ ] `tests/__init__.py` created
+- [x] `src/logic/__init__.py` created
+- [x] `tests/__init__.py` created
 - [ ] Dev dependencies installed (`pip install -e ".[dev]"`)
 - [ ] CI/CD baseline (`.github/workflows/`)
 - [ ] Pre-commit hooks configured
