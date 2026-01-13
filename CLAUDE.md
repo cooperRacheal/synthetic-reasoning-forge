@@ -1,15 +1,38 @@
 # CLAUDE.md — Project Governance
 
-> **Purpose:** Single source of truth for AI-assisted development. Read this file at the start of every session.
+> **Purpose:** Single source of truth for AI-assisted development. Read at start of every session.
+
+**Communication Style:** Be extremely concise. Sacrifice grammar for concision in all interactions and commit messages.
 
 ---
 
 ## Project State
 
 **Name:** Synthetic Reasoning Forge (SRF)
-**Goal:** Automate discovery and formalization of mathematical analogies between Control Theory and Systems Biology using Lean 4 formal verification.
-**Stage:** Pre-Alpha (infrastructure complete, core logic not yet implemented)
-**Target:** Senior-level portfolio project for systems/software engineering roles
+**Goal:** Prove mathematical equivalences between biological regulation and control systems using Lean 4
+**Stage:** Pre-Alpha (Phase 1 in progress)
+**Target:** Portfolio project for systems/software roles
+**Sprint:** Jan 12-19 → Phase 1 ODE solver + glucose models
+
+---
+
+## Active Sprint
+
+**Files:**
+- `SPRINT_PLAN.md` - roadmap/milestones (committed)
+- `SPRINT_TRACKING.md` - daily notes (gitignored)
+- `LEAN_BRIDGE_ARCHITECTURE.md` - Phase 2-4 design (committed)
+
+**Goal:** Phase 1 ODE solver + glucose-insulin models
+
+**Daily Check-In:**
+1. Ask for yesterday's progress
+2. Review today's tasks from SPRINT_PLAN.md
+3. Check blockers
+4. Help update SPRINT_TRACKING.md
+5. Keep on track for Sunday checkpoint
+
+**Sunday Decision:** Path A (polish) vs Path B (Lean bridge)
 
 ---
 
@@ -17,37 +40,38 @@
 
 ```
 reasoning_forge/
-├── .venv/              # Python 3.12 virtual environment (git-ignored)
-├── pyproject.toml      # Package manifest & tool configuration
-├── README.md           # External documentation (portfolio pitch)
-├── CLAUDE.md           # This file (AI governance)
-├── LICENSE             # MIT License
-├── data/               # Raw math problems & datasets
-├── scripts/            # Automation utilities
-├── src/logic/          # Python bridge, heuristics, ODE solver
+├── .venv/              # Python 3.12 venv (gitignored)
+├── pyproject.toml      # Package manifest
+├── README.md           # External docs
+├── CLAUDE.md           # This file
+├── SPRINT_PLAN.md      # Sprint roadmap (committed)
+├── SPRINT_TRACKING.md  # Daily notes (gitignored)
+├── LICENSE             # MIT
+├── data/               # Datasets
+├── scripts/            # Utilities
+├── src/logic/          # Python ODE solver
 ├── tests/              # Pytest suite
-└── lean/               # Lean 4 formal verification
+└── lean/               # Lean 4 proofs
     ├── ForgeLogic.lean
     ├── lakefile.toml
-    ├── lean-toolchain  # Pinned to v4.26.0
-    └── README_LOCAL.md # Local notes (git-ignored)
+    ├── lean-toolchain  # v4.26.0
+    └── README_LOCAL.md # (gitignored)
 ```
 
 ---
 
 ## Tech Stack
 
-| Layer | Technology | Notes |
-|-------|------------|-------|
-| Formal Kernel | Lean 4 (v4.26.0) | Pinned via `lean-toolchain` |
-| Orchestration | Python 3.11+ | Isolated in `.venv/` (currently 3.12) |
-| Build System | hatchling | Configured in `pyproject.toml` |
-| Integration | LeanDojo / lean-client-python | **Not yet installed** |
-| AI Agent | Claude Code CLI | You are here |
-| Formatting | black | 88-char lines, configured in `pyproject.toml` |
-| Linting | ruff | Rules: E, F, I, UP, B, SIM |
-| Type Checking | mypy | Strict mode enabled |
-| Testing | pytest | Configured in `pyproject.toml` |
+| Layer | Tech | Notes |
+|-------|------|-------|
+| Formal | Lean 4 v4.26.0 | Via lean-toolchain |
+| Runtime | Python 3.12 | In .venv/ |
+| Build | hatchling | pyproject.toml |
+| Integration | LeanDojo | Not yet installed |
+| Format | black | 88-char lines |
+| Lint | ruff | E,F,I,UP,B,SIM |
+| Types | mypy | Strict mode |
+| Test | pytest | - |
 
 ---
 
@@ -55,88 +79,86 @@ reasoning_forge/
 
 ```bash
 # Environment
-source .venv/bin/activate       # Activate Python venv
-pip install -e ".[dev]"         # Install package + dev dependencies
+source .venv/bin/activate
+pip install -e ".[dev]"
 
-# Python Quality
-black .                         # Format code
-ruff check .                    # Lint code
-mypy src/                       # Type check
-pytest                          # Run tests
+# Quality
+black .
+ruff check .
+mypy src/
+pytest
 
 # Lean
-cd lean && lake build           # Build Lean project
+cd lean && lake build
 ```
 
 ---
 
 ## Initialization Checklist
 
-- [x] Directory skeleton created
-- [x] Python venv (`.venv/`) with Python 3.12
-- [x] `pyproject.toml` manifest with tool configs
-- [x] `LICENSE` file (MIT)
-- [x] `README.md` with badges, structure, prerequisites
-- [x] Lean 4 toolchain initialized (`lake init`)
-- [x] `lean-toolchain` pinned to v4.26.0
-- [x] `CLAUDE.md` governance document
-- [x] `src/logic/__init__.py` created
-- [x] `tests/__init__.py` created
-- [ ] Dev dependencies installed (`pip install -e ".[dev]"`)
-- [ ] CI/CD baseline (`.github/workflows/`)
-- [ ] Pre-commit hooks configured
+- [x] Directory skeleton
+- [x] Python venv (3.12)
+- [x] pyproject.toml
+- [x] LICENSE (MIT)
+- [x] README.md
+- [x] Lean 4 toolchain (v4.26.0)
+- [x] CLAUDE.md
+- [x] src/logic/__init__.py
+- [x] tests/__init__.py
+- [x] Sprint plan files
+- [ ] Dev dependencies installed
+- [ ] CI/CD
+- [ ] Pre-commit hooks
 
 ---
 
 ## Feature Roadmap
 
 ### Phase 1: Foundation (Current)
-- [ ] Initialize `src/logic/` package structure
-- [ ] Create `typing.Protocol` for ODE System interface
-- [ ] Implement generic ODE solver
-- [ ] Unit tests for solver with known systems (Lorenz, Pendulum)
+- [ ] ODESystem Protocol
+- [ ] Generic ODE solver
+- [ ] Lorenz/Pendulum test systems
+- [ ] Glucose-insulin models
+- [ ] Unit tests (80%+ coverage)
 
 ### Phase 2: Bridge
-- [ ] Define JSON schema for Python ↔ Lean goal state passing
-- [ ] Create Lean subprocess runner with timeout/memory limits
-- [ ] Exception mapping for Lean errors (tactic timeouts, kernel panics)
+- [ ] JSON schema Python ↔ Lean
+- [ ] Lean subprocess runner
+- [ ] Exception mapping
 
 ### Phase 3: Intelligence
-- [ ] Cross-domain analogy mining logic
-- [ ] Mathlib namespace traversal
-- [ ] Automated verification loop
+- [ ] Analogy mining
+- [ ] Mathlib traversal
+- [ ] Automated verification
 
 ---
 
 ## Engineering Standards
 
-### Code Style
-1. **Packaging:** Use `pyproject.toml` and `src/` layout. No `setup.py`.
-2. **Formatting:** `black` for code, 88-char line length.
-3. **Linting:** `ruff` with rules: E, F, I, UP, B, SIM.
-4. **Type Hints:** All functions must have type annotations. `mypy --strict`.
+**Code:**
+1. `pyproject.toml` + `src/` layout (no setup.py)
+2. `black` format, 88-char lines
+3. `ruff` lint (E,F,I,UP,B,SIM)
+4. Type hints on all functions, `mypy --strict`
 
-### Quality
-5. **Testing:** `pytest` in `tests/`. Unit tests for core logic.
-6. **Documentation:** Docstrings for public functions. No over-documentation.
-7. **Lean:** No `sorry` in committed code. All proofs must verify.
+**Quality:**
+5. `pytest` in tests/, unit tests for core
+6. Docstrings for public functions only
+7. No `sorry` in committed Lean code
 
-### Process
-8. **Commits:** Conventional commits (`feat:`, `fix:`, `chore:`, `docs:`, `refactor:`, `test:`).
-9. **Co-authorship:** Include `Co-Authored-By: Claude <noreply@anthropic.com>` when AI-assisted.
+**Process:**
+8. Conventional commits (feat/fix/docs/chore/refactor/test)
+9. Co-authorship: `Co-Authored-By: Claude Sonnet 4.5 <noreply@anthropic.com>`
 
 ---
 
 ## Logging
-
-Use Python's `logging` module with a centralized configuration.
 
 ```python
 # src/logic/logger.py
 import logging
 
 def get_logger(name: str) -> logging.Logger:
-    """Get a configured logger for the given module name."""
     logger = logging.getLogger(name)
     if not logger.handlers:
         handler = logging.StreamHandler()
@@ -154,54 +176,48 @@ def get_logger(name: str) -> logging.Logger:
 
 ## Configuration
 
-Use environment variables for secrets and configurable paths.
-
 ```python
 import os
 
-LEAN_TIMEOUT = int(os.getenv("LEAN_TIMEOUT", "30"))  # seconds
+LEAN_TIMEOUT = int(os.getenv("LEAN_TIMEOUT", "30"))
 DATA_DIR = os.getenv("DATA_DIR", "data/")
 ```
 
 **Rules:**
-- Never commit `.env` files
-- Create `.env.example` as a template when configuration is needed
-- Document all environment variables in this file
+- Never commit `.env`
+- Create `.env.example` when needed
+- Document all env vars here
 
-**Current environment variables:** None yet. Create `.env.example` when first config is needed.
+**Current:** None. Create when needed.
 
 ---
 
 ## Error Handling
 
-### Custom Exceptions
-
-Define in `src/logic/exceptions.py`:
+**Exceptions in `src/logic/exceptions.py`:**
 
 ```python
 class ForgeError(Exception):
-    """Base exception for all Forge errors."""
+    """Base exception."""
 
 class LeanTimeoutError(ForgeError):
-    """Lean subprocess exceeded time limit."""
+    """Lean subprocess timeout."""
 
 class LeanVerificationError(ForgeError):
-    """Lean proof failed to verify."""
+    """Lean proof failed."""
 
 class SolverConvergenceError(ForgeError):
-    """ODE solver failed to converge."""
+    """ODE solver failed."""
 ```
 
-### Philosophy
-1. **Fail fast, fail loud:** Raise exceptions rather than returning `None` silently.
-2. **Log before raising:** Always log error context before raising.
-3. **Typed exceptions:** Use specific exception types, not generic `Exception`.
+**Philosophy:**
+1. Fail fast, fail loud
+2. Log before raising
+3. Specific exception types
 
 ---
 
 ## Interfaces (Protocols)
-
-Use `typing.Protocol` for dependency inversion and testability.
 
 ```python
 from typing import Protocol
@@ -209,127 +225,119 @@ import numpy as np
 from numpy.typing import NDArray
 
 class ODESystem(Protocol):
-    """Any object with a .f(t, y) method can be solved."""
+    """Any object with .f(t, y) method."""
 
     def f(self, t: float, y: NDArray[np.float64]) -> NDArray[np.float64]:
-        """Compute the derivative dy/dt at time t and state y."""
+        """Compute dy/dt."""
         ...
 ```
 
-This allows the solver to accept *any* system without tight coupling.
+Allows solver to accept any system without coupling.
 
 ---
 
 ## Testing Strategy
 
-| Type | Location | What to Test |
-|------|----------|--------------|
-| Unit | `tests/unit/` | Pure Python logic, ODE solver, parsers |
-| Integration | `tests/integration/` | Python ↔ Lean subprocess communication |
-| Smoke | `tests/smoke/` | End-to-end "does it run?" checks |
+| Type | Location | What |
+|------|----------|------|
+| Unit | tests/unit/ | Python logic, ODE solver |
+| Integration | tests/integration/ | Python ↔ Lean |
+| Smoke | tests/smoke/ | End-to-end |
 
-**Coverage goal:** 80%+ for `src/logic/`
+**Coverage:** 80%+ for src/logic/
 
-**Mocking strategy:**
-- Mock Lean subprocess calls in unit tests
-- Use real Lean in integration tests
+**Mocking:**
+- Mock Lean in unit tests
+- Real Lean in integration tests
 
-**Test naming:** `test_<function>_<scenario>.py`
+**Naming:** `test_<function>_<scenario>.py`
 
 ---
 
 ## Git Workflow
 
-**Branch strategy:** GitHub Flow (simple)
+**Strategy:** GitHub Flow
 
-1. `main` is always deployable
-2. Create feature branches: `git checkout -b feat/ode-solver`
-3. Open PR when ready for review
-4. Merge to main after review
+1. main = always deployable
+2. Feature branches: `git checkout -b feat/name`
+3. PR when ready
+4. Merge after review
 
-**Commit style:** Conventional Commits
-- `feat:` new feature
-- `fix:` bug fix
-- `docs:` documentation
-- `chore:` maintenance
-- `refactor:` code restructure
-- `test:` adding tests
+**Commits:** Conventional (feat/fix/docs/chore/refactor/test)
 
-**Protected branch:** None currently (solo project). Add protection when collaborating.
+**Protected branch:** None (solo). Add when collaborating.
 
 ---
 
 ## Dependency Management
 
-- **Bounds:** Defined in `pyproject.toml` (`>=X,<Y` for stability)
-- **Lockfile:** Generate with `pip freeze > requirements-lock.txt` after installing
-- **CI:** Install from lockfile for reproducibility
+- **Bounds:** In pyproject.toml (>=X,<Y)
+- **Lockfile:** `pip freeze > requirements-lock.txt`
+- **CI:** Install from lockfile
 
-**Future consideration:** Migrate to `uv` or `poetry` for better dependency resolution.
+**Future:** Consider uv or poetry
 
 ---
 
 ## Unresolved Questions
 
-> For AI context only. Migrate active work items to GitHub Issues.
-
 ### Technical
-1. **CI/CD Complexity:** Lean 4 + mathlib is heavy; GitHub Actions may timeout or exhaust disk space.
-2. **Solver Performance:** Pure Python ODE solver vs numba-optimized. Decision: Start pure Python, optimize if profiling shows need.
-3. **Bridge Interface:** No strategy yet for handling Lean kernel panics or tactic timeouts in Python subprocess.
-4. **Dependency Volatility:** `lean-client-python` and `mathlib4` update frequently. Pin specific versions when installing.
+1. CI/CD with Lean 4 + mathlib may timeout/exhaust disk
+2. Solver performance: pure Python vs numba. Start pure, optimize if needed
+3. Bridge interface for Lean panics/timeouts undefined
+4. LeanDojo/mathlib4 volatile, pin versions
 
 ### Process
-5. **Pre-commit Hooks:** Not yet configured. Evaluate `pre-commit` library when CI/CD is set up.
-6. **Environment Parity:** Lean versions must match between local and CI (`lean-toolchain` helps).
-7. **Pydantic Version:** Use Pydantic v2 if/when data validation is needed.
+5. Pre-commit hooks: evaluate when setting up CI/CD
+6. Lean version parity local/CI (lean-toolchain helps)
+7. Use Pydantic v2 if/when needed
 
 ### Scope
-8. **CLAUDE.md vs claude.local.md:** Consider splitting personal/local notes to a git-ignored file if this grows too large.
-9. **Data Strategy:** Track raw data in `data/` now; add to `.gitignore` if Git performance degrades.
+8. Consider splitting CLAUDE.md if grows large
+9. Track data in data/ now, gitignore if performance issues
 
 ---
 
 ## README.md Status
 
-The README is correctly scoped for external audiences (recruiters, users, contributors).
-
-**Currently complete sections:**
-- Project title and badges
-- Overview and System Architecture
-- Technical Stack (table format)
-- Project Structure
-- Current Status checklist
+**Complete:**
+- Title, badges
+- Overview, architecture
+- Tech stack
+- Structure
+- Status checklist
 - Prerequisites
-- Setup & Installation
-- License
-- Contributing
+- Setup/install
+- License, contributing
 
-**Future additions (not needed yet):**
-- [ ] "Development" section linking to CLAUDE.md for internal guidelines
-- [ ] CONTRIBUTING.md file when accepting external contributions
-- [ ] Badges for CI status once GitHub Actions is configured
+**Future:**
+- [ ] Development section → CLAUDE.md
+- [ ] CONTRIBUTING.md when external contributors
+- [ ] CI badges when Actions configured
 
 ---
 
 ## Session Continuity
 
-When starting a new Claude Code session:
+**Start new session:**
 
-1. Activate environment:
+1. Activate:
    ```bash
    cd /Users/rachealcooper/Documents/TBM_PhD/Personal_Projects/reasoning_forge
    source .venv/bin/activate
    ```
 
-2. Tell Claude:
-   ```
-   Read CLAUDE.md
-   ```
+2. Read: `CLAUDE.md`
 
-3. Optionally check state:
-   ```
-   Check git status and continue from the initialization checklist
-   ```
+3. Check sprint:
+   - Review SPRINT_PLAN.md for current day
+   - Ask about progress/blockers
+   - Update SPRINT_TRACKING.md if needed
 
-**This file is the project's memory. Update it as decisions are made.**
+4. Check state: `git status` + initialization checklist
+
+**This file = project memory. Update as decisions made.**
+
+---
+
+**At end of each session: List unresolved questions if any. Be extremely concise. Sacrifice grammar for concision.**
