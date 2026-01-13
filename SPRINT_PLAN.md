@@ -31,17 +31,16 @@
 
 ## Sprint Overview
 
-**Timeline:** Today (Sunday) → Next Sunday (6 days)
+**Timeline:** Today (Monday) → Next Sunday (6 days)
 
 **Milestones:**
 - Days 1-5: Complete Phase 1 (Steps 1-16)
-- Day 6: Add glucose-insulin models (Phase 1.5)
+- Day 6: Add glucose-insulin models (Phase 1.5) **Decision point**
 - Day 7: Demo + documentation
-- Day 8 (Sunday): **Decision point**
 
 ---
 
-## Day 1 (Today - Sunday): Foundation Infrastructure
+## Day 1 (Today - Monday): Foundation Infrastructure
 
 ### Goal
 Complete Steps 4-6 (Protocols, dependencies, directory structure)
@@ -67,12 +66,13 @@ Complete Steps 4-6 (Protocols, dependencies, directory structure)
 
 ---
 
-## Day 2 (Monday): Implement Test Systems
+## Day 2 (Tuesday): Implement Test Systems
 
 ### Goal
 Complete Steps 7-8 (Lorenz and Pendulum systems)
 
 ### Tasks
+- [ ] Complete any incomplete steps from Monday
 - [ ] Step 7: Implement Lorenz system (~30 min)
   - Create `src/logic/systems/lorenz.py`
   - Implement `f(t, y)` method with proper equations
@@ -100,7 +100,7 @@ Complete Steps 7-8 (Lorenz and Pendulum systems)
 
 ---
 
-## Day 3 (Tuesday): Generic Solver
+## Day 3 (Wednesday): Generic Solver
 
 ### Goal
 Complete Step 9 (Generic solver wrapper)
@@ -135,7 +135,7 @@ Complete Step 9 (Generic solver wrapper)
 
 ---
 
-## Day 4 (Wednesday): Testing Infrastructure
+## Day 4 (Thursday): Testing Infrastructure
 
 ### Goal
 Complete Steps 10-12 (Unit tests)
@@ -173,7 +173,7 @@ Complete Steps 10-12 (Unit tests)
 
 ---
 
-## Day 5 (Thursday): Quality Checks + Package Update
+## Day 5 (Friday): Quality Checks + Package Update
 
 ### Goal
 Complete Steps 13-14 (Quality tooling)
@@ -212,7 +212,7 @@ Complete Steps 13-14 (Quality tooling)
 
 ---
 
-## Day 6 (Friday): Glucose-Insulin Models
+## Day 6 (Saturday): Glucose-Insulin Models
 
 ### Goal
 Implement glucose and insulin minimal models (Phase 1.5)
@@ -261,7 +261,7 @@ Implement glucose and insulin minimal models (Phase 1.5)
 
 ---
 
-## Day 7 (Saturday): Demo + Documentation
+## Day 7 (Sunday): Demo + Documentation
 
 ### Goal
 Create demo script and polish
@@ -311,7 +311,7 @@ Create demo script and polish
 
 ---
 
-## Day 8 (Sunday): Decision Point
+## Day 8 (Monday): Decision Point
 
 ### Goal
 Assess progress and decide next steps
@@ -409,7 +409,7 @@ If you finish early, add these **bonus items** (in priority order):
 
 ## Daily Standups
 
-At the end of each day, update this file with:
+At the end of each day, update the SPRINT_TRACKING.md file with:
 
 ### Day X Standup
 
@@ -498,6 +498,6 @@ At the end of each day, update this file with:
 ---
 
 **Last Updated:** 2026-01-12
-**Sprint Start:** Sunday, 2026-01-12
+**Sprint Start:** Monday, 2026-01-12
 **Sprint End:** Sunday, 2026-01-19
 **Status:** Active
