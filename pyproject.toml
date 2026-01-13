@@ -44,7 +44,10 @@ classifiers = [
     "Topic :: Scientific/Engineering :: Medical Science Apps.",
     "Topic :: Education :: Computer Aided Instruction (CAI)",
 ]
-dependencies = []
+dependencies = [
+     "numpy>=1.24,<3.0",
+     "scipy>=1.11,<2.0",
+]
 
 [project.optional-dependencies]
 dev = [
