@@ -6,7 +6,9 @@ from numpy.typing import NDArray
 
 class LorenzSystem:
     r"""
-    The Lorenz system is a system of three ordinary differential equations first studied by Edward Lorenz. It is notable for having chaotic solutions for certain parameter values and starting conditions.
+    The Lorenz system is a system of three ordinary differential equations
+    first studied by Edward Lorenz. It is notable for having chaotic solutions
+    for certain parameter values and starting conditions.
 
     The equations are defined as:
     $$ \frac{dx}{dt} = \sigma(y - x) $$
@@ -16,14 +18,16 @@ class LorenzSystem:
     Attributes
     ----------
     sigma : float
-            The Prandtl number representing the ratio of momentum diffusivity to thermal diffusivity.
+            The Prandtl number representing the ratio of momentum diffusivity
+            to thermal diffusivity.
     rho : float
-            The Rayleigh number representing the temperature difference between the top and bottom of the fluid.
+            The Rayleigh number representing the temperature difference between
+            the top and bottom of the fluid.
     beta : float
             A geometric factor related to the physical dimensions of the layer
     """
 
-    def __init__(self, sigma, rho, beta):
+    def __init__(self, sigma: float, rho: float, beta: float) -> None:
         self.sigma = sigma
         self.rho = rho
         self.beta = beta
@@ -37,7 +41,8 @@ class LorenzSystem:
         Parameters
         ----------
         t : float
-                Current time. Required by ODE solvers, though the Lorenz system is autonomous (not explicitly dependent on time).
+                Current time. Required by ODE solvers, though the Lorenz
+                system is autonomous (not explicitly dependent on time).
         y : NDArray[np.float64]
                 The state vector [x, y, z].
 
