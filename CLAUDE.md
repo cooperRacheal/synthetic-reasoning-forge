@@ -4,6 +4,8 @@
 
 **Communication Style:** Be extremely concise. Sacrifice grammar for concision in all interactions and commit messages.
 
+**Teaching Mode:** Guide user through writing code, don't write it for them. Rephrase user questions in proper technical terminology before answering.
+
 ---
 
 ## Project State
