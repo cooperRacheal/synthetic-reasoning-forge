@@ -521,6 +521,89 @@ theorem glucose_bounded : ∀ t, 0 ≤ G t ∧ G t ≤ G_max
 
 ---
 
+## Visualization Architecture
+
+### Design Decision: Strategy Pattern for Extensible Plotting
+
+**Context:**
+Phase 1 requires visualization of ODE trajectories for validation. Initial needs are 2D (pendulum) and 3D (Lorenz) phase portraits, but future phases require bifurcation diagrams, Poincaré sections, and higher-dimensional projections.
+
+**Architecture Choice:**
+Implemented Strategy + Factory pattern with abstract base class instead of simple conditional logic.
+
+**Structure:**
+```
+src/logic/plotting/
+├── __init__.py          # Public API: plot_phase_portrait()
+├── base.py              # PhasePortraitPlotter ABC (abstract interface)
+├── plotters.py          # TwoDimensionalPlotter, ThreeDimensionalPlotter
+├── factory.py           # PlotterFactory (registry-based creation)
+└── config.py            # PlotConfig dataclass (styling configuration)
+```
+
+**Key Components:**
+
+1. **Abstract Base Class** (`base.py`):
+```python
+from abc import ABC, abstractmethod
+
+class PhasePortraitPlotter(ABC):
+    @abstractmethod
+    def plot(self, t: NDArray, y: NDArray, **kwargs) -> plt.Figure:
+        """Render phase portrait for specific dimensionality."""
+```
+
+2. **Concrete Strategies** (`plotters.py`):
+- `TwoDimensionalPlotter` - For systems like damped pendulum
+- `ThreeDimensionalPlotter` - For systems like Lorenz attractor
+- Future: `BifurcationPlotter`, `PoincareSectionPlotter`, `HighDimensionalProjectionPlotter`
+
+3. **Factory Registry** (`factory.py`):
+```python
+class PlotterFactory:
+    _registry = {
+        2: TwoDimensionalPlotter,
+        3: ThreeDimensionalPlotter,
+    }
+
+    @classmethod
+    def create(cls, n_dim: int) -> PhasePortraitPlotter:
+        """Select plotter based on state dimensionality."""
+```
+
+4. **Public API** (`__init__.py`):
+```python
+def plot_phase_portrait(t, y, config=None, save_path=None):
+    """Generic plotting function - automatically selects appropriate plotter."""
+    plotter = PlotterFactory.create(y.shape[0])
+    return plotter.plot(t, y, config=config, save_path=save_path)
+```
+
+**Integration with Solver:**
+```python
+def solve_ode(system, t_span, y0, method="RK45", plot=False, save_path=None):
+    sol = scipy.integrate.solve_ivp(...)
+
+    if plot:
+        from src.logic.plotting import plot_phase_portrait
+        plot_phase_portrait(sol.t, sol.y, save_path=save_path)
+
+    return sol
+```
+
+**Benefits:**
+- **Open/Closed Principle:** Add new visualization types without modifying existing code
+- **Extensibility:** Register new plotters (bifurcation, Poincaré) by implementing interface
+- **Maintainability:** Each plotter has single responsibility
+- **Testability:** Mock plotters in unit tests
+
+**Trade-offs:**
+- More upfront complexity (5 files vs 1)
+- Steeper learning curve
+- Justified by: Planned bifurcation work, learning OOP, production-grade infrastructure
+
+---
+
 ## Project Timeline
 
 ### Phase 1: ODE Solver (Current) — Weeks 1-2
@@ -528,10 +611,12 @@ theorem glucose_bounded : ∀ t, 0 ≤ G t ∧ G t ≤ G_max
 **Deliverables:**
 - [x] Exception handling (`exceptions.py`)
 - [x] Logging (`logger.py`)
-- [ ] Protocol definition (`protocols.py`)
-- [ ] NumPy/SciPy dependencies
-- [ ] Generic ODE solver (`solver.py`)
-- [ ] Lorenz and Pendulum test systems
+- [x] Protocol definition (`protocols.py`)
+- [x] NumPy/SciPy/Matplotlib dependencies
+- [x] Generic ODE solver (`solver.py`)
+- [x] Lorenz and Pendulum test systems
+- [x] Visualization architecture (Strategy pattern)
+- [ ] Plotting implementation (base, plotters, factory)
 - [ ] Unit tests with 80%+ coverage
 - [ ] Glucose-insulin minimal models
 - [ ] Parameter estimation (`scipy.optimize.least_squares`)
@@ -704,7 +789,7 @@ Once you prove glucose-insulin ≅ PID controller:
 
 ---
 
-**Last Updated:** 2026-01-12
+**Last Updated:** 2026-01-14
 **Author:** Claude Sonnet 4.5 (architecture design)
 **Project:** Synthetic Reasoning Forge
-**Status:** Pre-Alpha (Phase 1 in progress)
+**Status:** Pre-Alpha (Phase 1 in progress - Day 3 visualization architecture)

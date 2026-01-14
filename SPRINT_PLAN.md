@@ -101,10 +101,10 @@ on reviewing Python syntax and writing the code myself.
 
 ---
 
-## Day 3 (Wednesday): Generic Solver
+## Day 3 (Wednesday): Generic Solver + Trajectory Visualization
 
 ### Goal
-Complete Step 9 (Generic solver wrapper)
+Complete Step 9 (Generic solver wrapper) + validate with trajectory plots
 
 ### Tasks
 - [x] Step 9: Implement solve_ode() function ✅ (Done Day 2)
@@ -114,28 +114,47 @@ Complete Step 9 (Generic solver wrapper)
   - [x] Add logging statements
   - [x] Type annotations with Protocol
 - [x] Test with Lorenz system ✅
-  - [ ] Verify trajectories look reasonable (needs plotting - doing now)
   - [x] Check logging output
 - [x] Test with Pendulum system ✅
-  - [ ] Test damped oscillation behavior (needs plotting - doing now)
-  - [ ] Verify convergence to equilibrium (needs numerical check - doing now)
-- [ ] Debug any issues (BlowUpSystem test incomplete)
+- [x] Debug BlowUpSystem test ✅
+- [ ] **Visualization Architecture** (in progress)
+  - [x] Add matplotlib to pyproject.toml ✅
+  - [x] Install matplotlib ✅
+  - [ ] Design extensible plotting architecture (Strategy pattern)
+  - [ ] Create `src/logic/plotting/` subpackage
+  - [ ] Implement `base.py` (PhasePortraitPlotter ABC)
+  - [ ] Implement `plotters.py` (2D/3D concrete plotters)
+  - [ ] Implement `factory.py` (PlotterFactory registry)
+  - [ ] Implement `config.py` (PlotConfig dataclass)
+  - [ ] Implement `__init__.py` (public API)
+  - [ ] Integrate optional plotting into solver
+  - [ ] Test: Plot Lorenz phase portrait (verify chaotic attractor)
+  - [ ] Test: Plot Pendulum trajectories (verify damped oscillation)
 
 ### Estimated Time
-2-3 hours
+2-3 hours (solver) + 3-4 hours (visualization architecture + OOP implementation)
 
 ### End-of-Day Checkpoint
 - [x] `solve_ode()` successfully integrates Lorenz system ✅
 - [x] `solve_ode()` successfully integrates Pendulum system ✅
 - [x] Logging shows convergence info ✅
-- [ ] Error handling works (BlowUpSystem test crashes - need try/except)
-- [ ] Trajectory verification with plots (in progress Day 3)
-- [ ] Git commit: "feat: add generic ODE solver wrapper"
+- [x] Error handling works (BlowUpSystem correctly raises SolverConvergenceError) ✅
+- [x] Matplotlib dependency added ✅
+- [ ] Plotting subpackage structure created
+- [ ] PhasePortraitPlotter ABC implemented
+- [ ] Concrete plotters (2D/3D) implemented
+- [ ] Factory registry implemented
+- [ ] Integration with solver complete
+- [ ] Visual validation: Lorenz attractor renders correctly
+- [ ] Visual validation: Pendulum phase portrait shows damped oscillation
+- [x] Git commit: "feat: add generic ODE solver wrapper" ✅
+- [ ] Git commit: "feat: implement Strategy pattern visualization architecture"
 
 ### Notes
-Completed early (Day 2). Created test script scripts/test_solver.py.
+Completed early (Day 2). Created test script tests/test_solver.py.
 Added BlowUpSystem for testing error handling.
-Day 3: Doing proper verification with matplotlib before committing.
+Day 3: Fixed docstrings, verified all tests pass, committed solver implementation.
+**Architectural Decision:** Implemented Strategy + Factory pattern for plotting instead of simple script. Chosen for extensibility (future bifurcation diagrams, Poincaré sections, 4D+ projections) and learning OOP best practices. Trade-off: 3-4 hours instead of 1-2, but creates production-grade reusable infrastructure. Documented in PORTFOLIO_NOTES.md ADR #1.
 
 
 ---
@@ -437,7 +456,7 @@ At the end of each day, update the SPRINT_TRACKING.md file with:
 |-----|------|--------|-------|
 | 1 (Mon) | Foundation Infrastructure | ✅ Complete | Steps 4-6 done Day 2 |
 | 2 (Tue) | Test Systems | ✅ Complete | Steps 7-8 done Day 2 |
-| 3 (Wed) | Generic Solver | ✅ Complete | Done early Day 2 |
+| 3 (Wed) | Generic Solver + Visualization | ⏳ In Progress | Solver done, visualization in progress |
 | 4 (Thu) | Testing Infrastructure | 🔜 Not Started | |
 | 5 (Fri) | Quality Checks | 🔜 Not Started | |
 | 6 (Sat) | Glucose-Insulin Models | 🔜 Not Started | |

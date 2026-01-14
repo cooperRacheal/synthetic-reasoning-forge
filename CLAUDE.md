@@ -23,6 +23,7 @@
 **Files:**
 - `SPRINT_PLAN.md` - roadmap/milestones (committed)
 - `SPRINT_TRACKING.md` - daily notes (gitignored)
+- `DESIGN_DECISIONS.md` - design rationale (gitignored)
 - `LEAN_BRIDGE_ARCHITECTURE.md` - Phase 2-4 design (committed)
 
 **Goal:** Phase 1 ODE solver + glucose-insulin models
@@ -32,7 +33,13 @@
 2. Review today's tasks from SPRINT_PLAN.md
 3. Check blockers
 4. Help update SPRINT_TRACKING.md
-5. Keep on track for Sunday checkpoint
+5. Update DESIGN_DECISIONS.md when design choices made
+6. **Prompt to update PORTFOLIO_NOTES.md when:**
+   - Architectural decision made
+   - Learning milestone reached
+   - Sprint checkpoint completed
+   - Interesting bug fixed
+7. Keep on track for Sunday checkpoint
 
 **Sunday Decision:** Path A (polish) vs Path B (Lean bridge)
 
@@ -42,22 +49,23 @@
 
 ```
 reasoning_forge/
-├── .venv/              # Python 3.12 venv (gitignored)
-├── pyproject.toml      # Package manifest
-├── README.md           # External docs
-├── CLAUDE.md           # This file
-├── SPRINT_PLAN.md      # Sprint roadmap (committed)
-├── SPRINT_TRACKING.md  # Daily notes (gitignored)
-├── LICENSE             # MIT
-├── data/               # Datasets
-├── scripts/            # Utilities
-├── src/logic/          # Python ODE solver
-├── tests/              # Pytest suite
-└── lean/               # Lean 4 proofs
+├── .venv/                  # Python 3.12 venv (gitignored)
+├── pyproject.toml          # Package manifest
+├── README.md               # External docs
+├── CLAUDE.md               # This file
+├── SPRINT_PLAN.md          # Sprint roadmap (committed)
+├── SPRINT_TRACKING.md      # Daily notes (gitignored)
+├── DESIGN_DECISIONS.md     # Design rationale (gitignored)
+├── LICENSE                 # MIT
+├── data/                   # Datasets
+├── scripts/                # Utilities
+├── src/logic/              # Python ODE solver
+├── tests/                  # Pytest suite
+└── lean/                   # Lean 4 proofs
     ├── ForgeLogic.lean
     ├── lakefile.toml
-    ├── lean-toolchain  # v4.26.0
-    └── README_LOCAL.md # (gitignored)
+    ├── lean-toolchain      # v4.26.0
+    └── README_LOCAL.md     # (gitignored)
 ```
 
 ---
@@ -335,10 +343,56 @@ Allows solver to accept any system without coupling.
    - Review SPRINT_PLAN.md for current day
    - Ask about progress/blockers
    - Update SPRINT_TRACKING.md if needed
+   - Update DESIGN_DECISIONS.md when design choices made
 
 4. Check state: `git status` + initialization checklist
 
 **This file = project memory. Update as decisions made.**
+
+---
+
+## Portfolio Documentation
+
+**File:** `PORTFOLIO_NOTES.md` (gitignored, private)
+
+**Purpose:** Track architectural decisions, learning milestones, interview prep
+
+**When to prompt user to document:**
+
+1. **After major architectural decision**
+   - User chose between design alternatives
+   - New design pattern introduced
+   - Significant refactoring
+   - Prompt: "Document this decision in PORTFOLIO_NOTES.md ADR section?"
+
+2. **After learning milestone**
+   - New skill/pattern acquired
+   - "Aha moment" about concept
+   - Prompt: "Add to Skills Progression in PORTFOLIO_NOTES.md?"
+
+3. **After sprint checkpoint**
+   - Phase milestone reached
+   - Major feature complete
+   - Prompt: "Update Milestones in PORTFOLIO_NOTES.md?"
+
+4. **After interesting debugging**
+   - Non-trivial bug fixed
+   - Good interview story
+   - Prompt: "Document for 'hardest bug' interview question in PORTFOLIO_NOTES.md?"
+
+**ADR format:**
+- Problem statement
+- Alternatives considered
+- User's decision (emphasize THEIR choice after Claude recommendations)
+- Rationale + trade-offs
+- Interview talking point
+- Skills demonstrated
+
+**Auto-prompt triggers:**
+- User says "I choose X" → Prompt to document
+- Design pattern implemented → Prompt Skills Progression
+- Sprint day completed → Prompt Milestones update
+- Debugging session resolved → Prompt interview stories
 
 ---
 
