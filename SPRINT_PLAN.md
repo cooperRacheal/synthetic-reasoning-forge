@@ -1,4 +1,4 @@
-# 6-Day Sprint Plan: Phase 1 Foundation
+# 7-Day Sprint Plan: Phase 1 Foundation
 
 > **Goal:** Complete Phase 1 ODE solver infrastructure + glucose-insulin models by Sunday
 >
@@ -31,7 +31,7 @@
 
 ## Sprint Overview
 
-**Timeline:** Today (Monday 1/12/26) to Sunday (1/18/26) - 6 Days
+**Timeline:** Monday (1/12/26) to Sunday (1/18/26) - 7 Days
 
 **Milestones:**
 - Days 1-5: Complete Phase 1 (Steps 1-16)
@@ -120,13 +120,17 @@ Complete Step 9 (Generic solver wrapper) + validate with trajectory plots
 - [ ] **Visualization Architecture** (in progress)
   - [x] Add matplotlib to pyproject.toml ✅
   - [x] Install matplotlib ✅
-  - [ ] Design extensible plotting architecture (Strategy pattern)
-  - [ ] Create `src/logic/plotting/` subpackage
-  - [ ] Implement `base.py` (PhasePortraitPlotter ABC)
+  - [x] Design extensible plotting architecture (Strategy pattern) ✅
+  - [x] Create `src/logic/plotting/` subpackage ✅
+  - [x] Implement `config.py` (PlotConfig dataclass) ✅
+    - Base 7: figsize, dpi, style, save_format, show_grid, line_width, color
+    - Added 4: alpha, marker_size, show_markers, aspect
+    - Deferred: font sizes, legend control, axis limits, cmap (add Day 6+ if needed)
+  - [x] Implement `base.py` (PhasePortraitPlotter ABC) ✅
+  - [x] Create `plotting/__init__.py` (package marker) ✅
   - [ ] Implement `plotters.py` (2D/3D concrete plotters)
   - [ ] Implement `factory.py` (PlotterFactory registry)
-  - [ ] Implement `config.py` (PlotConfig dataclass)
-  - [ ] Implement `__init__.py` (public API)
+  - [ ] Implement `__init__.py` (public API with plot_phase_portrait function)
   - [ ] Integrate optional plotting into solver
   - [ ] Test: Plot Lorenz phase portrait (verify chaotic attractor)
   - [ ] Test: Plot Pendulum trajectories (verify damped oscillation)
@@ -140,10 +144,13 @@ Complete Step 9 (Generic solver wrapper) + validate with trajectory plots
 - [x] Logging shows convergence info ✅
 - [x] Error handling works (BlowUpSystem correctly raises SolverConvergenceError) ✅
 - [x] Matplotlib dependency added ✅
-- [ ] Plotting subpackage structure created
-- [ ] PhasePortraitPlotter ABC implemented
+- [x] Plotting subpackage structure created ✅
+- [x] PlotConfig dataclass implemented (11 attributes) ✅
+- [x] PhasePortraitPlotter ABC implemented ✅
+- [x] plotting/__init__.py created (package marker) ✅
 - [ ] Concrete plotters (2D/3D) implemented
 - [ ] Factory registry implemented
+- [ ] plotting/__init__.py public API (plot_phase_portrait function)
 - [ ] Integration with solver complete
 - [ ] Visual validation: Lorenz attractor renders correctly
 - [ ] Visual validation: Pendulum phase portrait shows damped oscillation
@@ -151,10 +158,22 @@ Complete Step 9 (Generic solver wrapper) + validate with trajectory plots
 - [ ] Git commit: "feat: implement Strategy pattern visualization architecture"
 
 ### Notes
-Completed early (Day 2). Created test script tests/test_solver.py.
-Added BlowUpSystem for testing error handling.
-Day 3: Fixed docstrings, verified all tests pass, committed solver implementation.
-**Architectural Decision:** Implemented Strategy + Factory pattern for plotting instead of simple script. Chosen for extensibility (future bifurcation diagrams, Poincaré sections, 4D+ projections) and learning OOP best practices. Trade-off: 3-4 hours instead of 1-2, but creates production-grade reusable infrastructure. Documented in PORTFOLIO_NOTES.md ADR #1.
+**Day 2:** Completed solver early. Created tests/test_solver.py, added BlowUpSystem for error handling.
+
+**Day 3 (Wed Jan 14):**
+- Morning: Fixed docstrings, verified tests, committed solver
+- Afternoon: Architectural design, chose Strategy + Factory pattern for extensibility
+  - Created PLOTTING_OOP_ARCHITECTURE.md spec
+  - Fixed editor tabs issue (GNU nano)
+  - Added matplotlib dependency
+- Evening: OOP learning session, implemented config.py + base.py
+  - Deep dive: dataclasses, ABC, decorators, type hints, import scope
+  - Implemented PlotConfig (11 attributes) and PhasePortraitPlotter ABC
+  - Import tests passed
+
+**Architectural Decision:** Strategy + Factory pattern for plotting vs simple script. Chosen for extensibility (bifurcation diagrams, Poincaré sections, 4D+ projections) and OOP learning. Trade-off: 3-4 hour investment for production-grade reusable infrastructure. Documented in PORTFOLIO_NOTES.md ADR #1.
+
+**Status:** ~50% complete Day 3 visualization work. Remaining: plotters.py, factory.py, __init__.py public API, integration, visual validation.
 
 
 ---

@@ -396,4 +396,14 @@ Allows solver to accept any system without coupling.
 
 ---
 
-**At end of each session: List unresolved questions if any. Be extremely concise. Sacrifice grammar for concision.**
+## End of Session Checklist
+
+**Before closing:**
+
+1. **Push to remote:** Always push commits to GitHub
+   ```bash
+   git push
+   ```
+   Verify branch tracking: `git branch -vv`
+
+2. **List unresolved questions:** If any exist. Be extremely concise. Sacrifice grammar for concision.
