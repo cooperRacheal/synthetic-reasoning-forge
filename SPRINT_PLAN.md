@@ -128,7 +128,7 @@ Complete Step 9 (Generic solver wrapper) + validate with trajectory plots
     - Deferred: font sizes, legend control, axis limits, cmap (add Day 6+ if needed)
   - [x] Implement `base.py` (PhasePortraitPlotter ABC) ✅
   - [x] Create `plotting/__init__.py` (package marker) ✅
-  - [ ] Implement `plotters.py` (2D/3D concrete plotters)
+  - [x] Implement `plotters.py` (2D/3D concrete plotters) ✅
   - [ ] Implement `factory.py` (PlotterFactory registry)
   - [ ] Implement `__init__.py` (public API with plot_phase_portrait function)
   - [ ] Integrate optional plotting into solver
@@ -148,7 +148,7 @@ Complete Step 9 (Generic solver wrapper) + validate with trajectory plots
 - [x] PlotConfig dataclass implemented (11 attributes) ✅
 - [x] PhasePortraitPlotter ABC implemented ✅
 - [x] plotting/__init__.py created (package marker) ✅
-- [ ] Concrete plotters (2D/3D) implemented
+- [x] Concrete plotters (2D/3D) implemented ✅
 - [ ] Factory registry implemented
 - [ ] plotting/__init__.py public API (plot_phase_portrait function)
 - [ ] Integration with solver complete
@@ -173,7 +173,15 @@ Complete Step 9 (Generic solver wrapper) + validate with trajectory plots
 
 **Architectural Decision:** Strategy + Factory pattern for plotting vs simple script. Chosen for extensibility (bifurcation diagrams, Poincaré sections, 4D+ projections) and OOP learning. Trade-off: 3-4 hour investment for production-grade reusable infrastructure. Documented in PORTFOLIO_NOTES.md ADR #1.
 
-**Status:** ~50% complete Day 3 visualization work. Remaining: plotters.py, factory.py, __init__.py public API, integration, visual validation.
+**Day 3 Continuation (Wed evening):**
+- Implemented plotters.py: TwoDimensionalPlotter and ThreeDimensionalPlotter
+- Deep OOP learning: 2D vs 3D matplotlib API differences, negative indexing, array shapes
+- Fixed multiple syntax errors with guidance (typos, indentation, list wrapping for 3D)
+- Learned: y shape (3, n_points) = 2D array holding 3D system trajectory
+- Learned: 3D axes require sequences `[value]` not scalars for single points
+- Learned: negative indexing `y[:, -1]` = last element, length-agnostic
+
+**Status:** ~75% complete Day 3 visualization work. Remaining: factory.py, __init__.py public API, integration, visual validation.
 
 
 ---
@@ -475,7 +483,7 @@ At the end of each day, update the SPRINT_TRACKING.md file with:
 |-----|------|--------|-------|
 | 1 (Mon) | Foundation Infrastructure | ✅ Complete | Steps 4-6 done Day 2 |
 | 2 (Tue) | Test Systems | ✅ Complete | Steps 7-8 done Day 2 |
-| 3 (Wed) | Generic Solver + Visualization | ⏳ In Progress | Solver done, visualization in progress |
+| 3 (Wed) | Generic Solver + Visualization | ⏳ In Progress | Solver done, plotters.py done, factory/API remain |
 | 4 (Thu) | Testing Infrastructure | 🔜 Not Started | |
 | 5 (Fri) | Quality Checks | 🔜 Not Started | |
 | 6 (Sat) | Glucose-Insulin Models | 🔜 Not Started | |
