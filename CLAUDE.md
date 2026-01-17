@@ -22,7 +22,7 @@
 
 See `SPRINT_PLAN.md` for: project goals, sprint timeline, current day tasks, tech stack
 
-**Current:** Day 5 - solver + viz complete, visual validation pending
+**Current:** Day 6 - solver + viz + validation complete
 
 ---
 
@@ -32,7 +32,7 @@ See `SPRINT_PLAN.md` for: project goals, sprint timeline, current day tasks, tec
 - `notes/SPRINT_TRACKING.md` - daily log
 
 **When design choices made:**
-- `notes/DESIGN_DECISIONS.md` - rationale (e.g., chose Strategy pattern, deferred feature)
+- `ARCHITECTURE.md` - ADRs (e.g., chose Strategy pattern, deferred feature)
 
 **Prompt user to update (after ADRs/milestones/bugs):**
 - `notes/PORTFOLIO_NOTES.md` - interview prep

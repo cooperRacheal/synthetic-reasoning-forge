@@ -22,10 +22,9 @@
 - Your daily updates, blockers, frustrations, messy notes
 - Write freely without worrying about polish
 
-**Architecture documentation (`LEAN_BRIDGE_ARCHITECTURE.md`):**
-- ✅ Committed to git (public)
-- Technical design document for Python-Lean bridge
-- Reference for Phase 2-4 implementation
+**Architecture documentation:**
+- `ARCHITECTURE.md` - Phase 1 ADRs (✅ committed to git)
+- `notes/PHASE2_3_LEAN_BRIDGE.md` - Phases 2-3 design (gitignored until implementation begins)
 
 ---
 
@@ -135,8 +134,8 @@ Complete Step 9 (Generic solver wrapper) + validate with trajectory plots
   - [x] Implement `factory.py` (PlotterFactory registry) ✅ (Day 5)
   - [x] Implement `__init__.py` (public API with plot_phase_portrait function) ✅ (Day 5)
   - [ ] Integrate optional plotting into solver (deferred)
-  - [ ] Test: Plot Lorenz phase portrait (verify chaotic attractor)
-  - [ ] Test: Plot Pendulum trajectories (verify damped oscillation)
+  - [x] Test: Plot Lorenz phase portrait (verify chaotic attractor) ✅ (Day 6)
+  - [x] Test: Plot Pendulum trajectories (verify damped oscillation) ✅ (Day 6)
 
 ### Estimated Time
 2-3 hours (solver) + 3-4 hours (visualization architecture + OOP implementation)
@@ -155,11 +154,12 @@ Complete Step 9 (Generic solver wrapper) + validate with trajectory plots
 - [x] Factory registry implemented ✅ (Day 5)
 - [x] plotting/__init__.py public API (plot_phase_portrait function) ✅ (Day 5)
 - [ ] Integration with solver complete (deferred)
-- [ ] Visual validation: Lorenz attractor renders correctly
-- [ ] Visual validation: Pendulum phase portrait shows damped oscillation
+- [x] Visual validation: Lorenz attractor renders correctly ✅ (Day 5 evening)
+- [x] Visual validation: Pendulum phase portrait shows damped oscillation ✅ (Day 5 evening)
 - [x] Git commit: "feat: add generic ODE solver wrapper" ✅
 - [x] Git commit: "feat(plotting): implement PlotterFactory and public API" ✅ (Day 5)
 - [x] Git commit: "feat(solver): add method selection and auto-fallback for stiff systems" ✅ (Day 5)
+- [x] Git commit: "feat(validation): add visual validation suite with biologically relevant defaults" ✅ (Day 5 evening)
 
 ### Notes
 **Day 2:** Completed solver early. Created tests/test_solver.py, added BlowUpSystem for error handling.
@@ -186,6 +186,26 @@ Complete Step 9 (Generic solver wrapper) + validate with trajectory plots
 - Learned: negative indexing `y[:, -1]` = last element, length-agnostic
 
 **Status:** ~75% complete Day 3 visualization work. Remaining: factory.py, __init__.py public API, integration, visual validation.
+
+**Day 5 (Fri Jan 16):**
+- Morning/Afternoon: Completed Day 3 visualization architecture (factory.py, public API, __all__ exports)
+- Enhanced solve_ode() with method selection + auto-fallback for stiff systems
+- Synchronized documentation across 6 files
+- Optimized CLAUDE.md: 410 lines → 51 lines (87% token reduction)
+
+**Day 6 (Sat Jan 17) - Visual Validation Complete:**
+- Created examples/validate_plotting.py generating 7 validation plots
+- 3 Lorenz regimes (chaotic, stable, convective) each with 3D + 2D x-y projections
+- Damped pendulum with biologically relevant parameters (b=0.5, human limb swing)
+- Added textbook defaults to LorenzSystem (σ=10, ρ=28, β=8/3 - dimensionless)
+- Added textbook defaults to DampedPendulum (L=1.0m, b=0.2, m=1.0kg, g=9.81)
+- Created notes/REFERENCES.md documenting biomechanics literature for pendulum params
+- Fixed pyproject.toml packages=["src"] for correct import resolution
+- **Architecture validation achieved:** Factory automatically selects correct plotter based on data shape
+- Proved Strategy+Factory pattern delivers on extensibility promise
+- Git commit + push: "feat(validation): add visual validation suite with biologically relevant defaults"
+
+**Status:** Day 3 visualization work 100% complete ✅. Visual validation complete ✅ (Day 6). Testing (Day 4) and quality checks (Day 5) remain as catch-up priorities for Day 7.
 
 
 ---
@@ -280,7 +300,7 @@ Implement glucose and insulin minimal models (Phase 1.5)
   - Update plot_phase_portrait() to infer PlotType from dimensionality
   - Fix tests to use PlotType enum
   - **Rationale:** int keys insufficient for bifurcation diagrams (2D but not phase portraits)
-  - **Context:** Technical debt from Day 5, documented in DESIGN_DECISIONS.md
+  - **Context:** Technical debt from Day 5, documented in ARCHITECTURE.md
 - [ ] Implement `GlucoseMinimalModel` (~1 hour)
   - Create `src/logic/systems/glucose.py`
   - Equations 9-10 from Van Riel paper
@@ -320,6 +340,21 @@ Implement glucose and insulin minimal models (Phase 1.5)
 - [ ] Git commit: "feat: implement glucose-insulin minimal models with parameter estimation"
 
 ### Notes
+
+**Reprioritization (Jan 17):**
+Day 6 repurposed for visual validation completion instead of glucose-insulin models due to schedule catch-up from Days 3-5. Glucose-insulin models deferred to future sprint.
+
+**What Actually Happened (Sat Jan 17):**
+- Created examples/validate_plotting.py generating 7 validation plots
+- 3 Lorenz regimes (chaotic, stable, convective) in 3D + 2D projections
+- Damped pendulum with biologically relevant parameters (b=0.5)
+- Added textbook defaults to LorenzSystem and DampedPendulum
+- Created notes/REFERENCES.md documenting biomechanics literature
+- Fixed pyproject.toml packages=["src"] for import resolution
+- Architecture validation complete: Factory automatically selects correct plotter
+- Git commit c0151ab: "feat(validation): add visual validation suite with biologically relevant defaults"
+
+See Day 3 Notes section (lines 197-209) for full details.
 
 
 ---
@@ -495,11 +530,11 @@ At the end of each day, update the SPRINT_TRACKING.md file with:
 |-----|------|--------|-------|
 | 1 (Mon) | Foundation Infrastructure | ✅ Complete | Steps 4-6 done Day 2 |
 | 2 (Tue) | Test Systems | ✅ Complete | Steps 7-8 done Day 2 |
-| 3 (Wed) | Generic Solver + Visualization | ⏳ In Progress | Solver done, plotters.py done, factory/API remain |
-| 4 (Thu) | Testing Infrastructure | 🔜 Not Started | |
-| 5 (Fri) | Quality Checks | 🔜 Not Started | |
-| 6 (Sat) | Glucose-Insulin Models | 🔜 Not Started | |
-| 7 (Sun) | Demo + Documentation | 🔜 Not Started | |
+| 3 (Wed) | Generic Solver + Visualization | ✅ Complete | Solver + full viz architecture complete Day 5 |
+| 4 (Thu) | Testing Infrastructure | 🔜 Not Started | Deferred to catch-up |
+| 5 (Fri) | Quality Checks | 🔜 Not Started | Deferred to catch-up |
+| 6 (Sat) | Visual Validation | ✅ Complete | 7 plots generated, architecture validated |
+| 7 (Sun) | TBD | 🔜 Not Started | Testing/Quality catch-up or glucose models |
 | 8 (Mon) | **Decision Point** | 🔜 Not Started | |
 
 **Legend:**
@@ -594,7 +629,7 @@ sol = solve_ode(system, t_span, y0, plot=True, save_path='output.png')
 
 ---
 
-**Last Updated:** 2026-01-14
+**Last Updated:** 2026-01-17
 **Sprint Start:** Monday, 2026-01-12
 **Sprint End:** Sunday, 2026-01-19
 **Status:** Active

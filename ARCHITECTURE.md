@@ -1,0 +1,233 @@
+# Architecture Decision Records
+
+> **Purpose:** Document significant design choices and their rationale
+> **Scope:** Phase 1 implementation decisions (ODE solver + visualization)
+> **Last Updated:** 2026-01-17
+
+**Note:** This file documents WHAT was decided and WHY. For WHEN and HOW implementation progressed, see notes/SPRINT_TRACKING.md. For future architecture (Phases 2-3), see notes/PHASE2_3_LEAN_BRIDGE.md.
+
+---
+
+## ADR #1: Strategy + Factory Pattern for Visualization
+
+**Decision:** Implement extensible plotting architecture using Strategy + Factory patterns instead of simple plotting functions.
+
+**Alternatives Considered:**
+1. **Simple plotting functions** (plot_2d, plot_3d)
+   - Pro: Fast implementation, minimal code
+   - Con: Not extensible, duplicates logic across functions
+2. **Single class with if/else branching**
+   - Pro: Centralized, easy to understand
+   - Con: Violates Open/Closed Principle, grows complex
+3. **Strategy + Factory pattern** [CHOSEN]
+   - Pro: Extensible, testable, demonstrates OOP mastery
+   - Con: More upfront time investment
+
+**Rationale:**
+- Enables future visualization types (bifurcation diagrams, Poincaré sections) without modifying existing code
+- Demonstrates production-grade OOP design for portfolio
+- Factory provides single entry point despite multiple plotter implementations
+- Visual validation more intuitive than numerical logs for solver correctness
+
+**Trade-offs Accepted:**
+- 3-4 hour investment vs 30 min for simple functions
+- Schedule slippage (Day 3 extended into Days 4-5)
+- Worth it: Stronger architectural foundation, deep OOP learning
+
+**Impact:**
+- Visualization layer extensible via Open/Closed Principle
+- Portfolio demonstrates design pattern mastery
+- Factory automatically selects correct plotter based on data dimensionality
+
+---
+
+## ADR #2: Validation Script Over Notebook
+
+**Decision:** Use standalone Python script (examples/validate_plotting.py) instead of Jupyter notebook for architecture validation.
+
+**Alternatives Considered:**
+- Jupyter notebook (interactive, markdown explanations)
+- Interactive matplotlib with plt.show() (immediate feedback)
+
+**Rationale:**
+- Version control friendly (text-based, no JSON metadata)
+- Reproducible (no execution order issues)
+- Runnable in CI/CD
+- Faster iteration during development
+- Clear entry point for validation
+
+**Future Consideration:**
+May create notebook later for glucose-insulin demos where step-by-step explanation adds value.
+
+---
+
+## ADR #3: PlotterFactory Registry - int Keys Now, Enum Later
+
+**Decision:** Use int keys (dimensionality) for factory registry in Phase 1, defer Enum refactoring to future sprint.
+
+**Problem:**
+int keys create semantic collision - multiple plot types (phase portraits, bifurcation diagrams, time series) can share same dimensionality (2D) but require different plotters.
+
+**Alternatives Considered:**
+1. **String keys** ('phase_2d', 'bifurcation')
+   - Pro: Flexible, human-readable
+   - Con: No type safety, typo-prone
+2. **Enum keys** (PlotType.PHASE_2D, PlotType.BIFURCATION)
+   - Pro: Type-safe, IDE autocomplete, explicit semantics
+   - Con: Requires import, more verbose
+3. **Hierarchical registries** (separate per plot family)
+   - Pro: Clear separation
+   - Con: More complexity, multiple factories
+
+**Decision Rationale:**
+- YAGNI: Phase 1 only needs phase portraits (2D, 3D)
+- Behind schedule: Simple int keys unblock current work
+- Documented technical debt for future refactoring
+- Current implementation sufficient for Phase 1 scope
+
+**Future Refactoring Plan:**
+```python
+class PlotType(Enum):
+    PHASE_2D = "phase_2d"
+    PHASE_3D = "phase_3d"
+    BIFURCATION = "bifurcation"
+```
+
+---
+
+## ADR #4: Solver Method Selection + Auto-Fallback
+
+**Decision:** Add `method` and `auto_fallback` parameters to solve_ode() for robust handling of stiff systems.
+
+**Problem:**
+Hardcoded RK45 method fails on stiff systems (widely separated timescales).
+
+**Implementation:**
+```python
+solve_ode(system, t_span, y0, method="RK45", auto_fallback=True)
+```
+
+**Cascading Error Handling:**
+1. Try user-specified method
+2. If fails AND auto_fallback=True AND method ≠ LSODA → retry with LSODA
+3. If still fails → raise SolverConvergenceError
+
+**Rationale:**
+- Robustness: Handles stiff systems automatically (glucose-insulin models likely stiff)
+- User control: Advanced users can specify method explicitly
+- Smart default: LSODA auto-detects stiffness, handles 90% of edge cases
+- Guard clause (method ≠ LSODA) prevents infinite retry loop
+
+**Trade-offs:**
+- Added complexity vs hardcoded method
+- Worth it: Handles broader class of systems, demonstrates numerical methods understanding
+
+---
+
+## ADR #5: Defer Solver Plotting Integration
+
+**Decision:** Keep current two-step workflow (solve → plot separately), defer one-step integration as optional convenience feature.
+
+**Current Workflow (Retained):**
+```python
+sol = solve_ode(system, t_span, y0)
+plot_phase_portrait(sol.t, sol.y, save_path='output.png')
+```
+
+**Proposed Workflow (Deferred):**
+```python
+sol = solve_ode(system, t_span, y0, plot=True, save_path='output.png')
+```
+
+**Rationale for Deferral:**
+- Separation of concerns: Solver focused on solving, plotter on visualization
+- Behind schedule: Focus on core functionality
+- Minimal value: Convenience feature, not critical
+- Coupling concern: Integration couples solver to plotting layer
+
+**Trade-offs:**
+- Current: Clean separation, testable in isolation, can plot experimental data without solver
+- Proposed: One line instead of two (minor convenience)
+- Decision: Clean architecture > convenience under time pressure
+
+---
+
+## ADR #6: Data Flow - Plotters Operate on Solution Arrays
+
+**Decision:** Plotters consume pre-computed solution arrays (t, y), not ODESystem objects.
+
+**Architecture:**
+```
+ODESystem → solve_ode() → Solution (t, y) → plot_phase_portrait(t, y)
+```
+
+**NOT:**
+```
+ODESystem → plot_phase_portrait(system, t_span, y0)  [plotter calls solver]
+```
+
+**Rationale:**
+
+1. **Decoupling - Reusable across contexts:**
+   - ODE solver output
+   - Experimental data (no system!)
+   - Bifurcation analysis (multiple systems)
+
+2. **Performance - Avoid redundant computation:**
+   - Solve once, visualize multiple ways
+   - No recomputation when changing plot styles
+
+3. **Testing - Synthetic data:**
+   - Test plotter without running expensive solver
+   - Use fake arrays for unit tests
+
+**Analogy:**
+Data analysis pipeline doesn't re-run statistical model for each visualization - it visualizes pre-computed results.
+
+---
+
+## ADR #7: Textbook/Biologically Relevant Defaults
+
+**Decision:** Add scientifically meaningful default parameters to ODE systems, document literature sources.
+
+**LorenzSystem Defaults (Dimensionless):**
+- σ = 10, ρ = 28, β = 8/3
+- Classic Lorenz 1963 parameters producing butterfly attractor
+
+**DampedPendulum Defaults:**
+- L = 1.0 m, m = 1.0 kg, b = 0.2 N·m·s/rad, g = 9.81 m/s²
+- Textbook values for standard pendulum
+
+**Validation Script:** Uses b = 0.5 for biological relevance (human limb swing).
+
+**Literature Documentation:** notes/REFERENCES.md
+- Collins et al. (2009): Arms as passive pendulums during gait
+- Maus et al. (2016): Springy pendulum model for leg swing
+
+**Rationale:**
+- Reproducibility: Systems usable out-of-box
+- Educational value: Defaults represent canonical literature values
+- Portfolio rigor: Demonstrates research beyond arbitrary numbers
+- Biological context: Validation uses physiologically relevant parameters
+
+---
+
+## ADR #8: matplotlib as Main Dependency (Not Dev-Only)
+
+**Decision:** Add matplotlib>=3.8,<4.0 to project.dependencies (not dev dependencies).
+
+**Alternatives:**
+- Dev dependencies only
+- Optional visualization dependencies
+
+**Rationale:**
+- Visualization is core validation workflow, not optional
+- Future work (glucose-insulin parameter fitting) requires plotting
+- Version >=3.8 ensures numpy 2.x compatibility
+- Standard in scientific Python stack (numpy, scipy, matplotlib trinity)
+
+---
+
+## Timeline Reference
+
+See SPRINT_TRACKING.md for detailed timeline of when these decisions were made and how implementation progressed.
