@@ -21,18 +21,22 @@ class DampedPendulum:
 
     Attributes
     ----------
-    length : float
-        Length of the pendulum arm ($L$) in meters.
-    damping : float
-        Damping coefficient ($b$) representing air resistance or friction.
-    mass : float
-        Mass of the pendulum bob ($m$) in kilograms.
+    length : float, optional
+        Length of the pendulum arm ($L$) in meters. Defaults to 1.0 m
+        (standard meter stick length).
+    damping : float, optional
+        Damping coefficient ($b$) in N·m·s/rad representing air resistance
+        or friction. Defaults to 0.2 (light damping, shows clear spiral).
+    mass : float, optional
+        Mass of the pendulum bob ($m$) in kilograms. Defaults to 1.0 kg
+        (unit mass, simplifies calculations).
     gravity : float, optional
-        Acceleration due to gravity ($g$), defaults to 9.81 m/s^2.
+        Acceleration due to gravity ($g$) in m/s². Defaults to 9.81 m/s²
+        (Earth gravity).
     """
 
     def __init__(
-        self, length: float, damping: float, mass: float, gravity: float = 9.81
+        self, length: float = 1.0, damping: float = 0.2, mass: float = 1.0, gravity: float = 9.81
     ) -> None:
         self.length = length
         self.damping = damping
@@ -58,7 +62,7 @@ class DampedPendulum:
             The derivative [d_theta/dt, d_omega/dt].
 
         Note: The solution shows damped oscillations, where amplitude A decays
-        exponentially as $e^{-\left(\frac{b}{2m}\right)t} $$
+        exponentially as $e^{-\left(\frac{b}{2m}\right)t}$.
         """
 
         theta, omega = y

@@ -59,7 +59,7 @@ dev = [
 ]
 
 [tool.hatch.build.targets.wheel]
-packages = ["src/logic"]
+packages = ["src"]
 
 [tool.black]
 line-length = 88

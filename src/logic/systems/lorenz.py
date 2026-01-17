@@ -17,17 +17,18 @@ class LorenzSystem:
 
     Attributes
     ----------
-    sigma : float
-            The Prandtl number representing the ratio of momentum diffusivity
-            to thermal diffusivity.
-    rho : float
-            The Rayleigh number representing the temperature difference between
-            the top and bottom of the fluid.
-    beta : float
-            A geometric factor related to the physical dimensions of the layer
+    sigma : float, optional
+        The Prandtl number (dimensionless) representing the ratio of momentum
+        diffusivity to thermal diffusivity. Defaults to 10.0 (standard chaotic regime).
+    rho : float, optional
+        The Rayleigh number (dimensionless) representing the temperature difference
+        between the top and bottom of the fluid. Defaults to 28.0 (standard chaotic regime).
+    beta : float, optional
+        A geometric factor (dimensionless) related to the physical dimensions of
+        the layer. Defaults to 8/3 ≈ 2.667 (standard chaotic regime).
     """
-
-    def __init__(self, sigma: float, rho: float, beta: float) -> None:
+    
+    def __init__(self, sigma: float = 10.0, rho: float = 28.0, beta: float = 8/3) -> None:
         self.sigma = sigma
         self.rho = rho
         self.beta = beta
