@@ -359,57 +359,104 @@ See Day 3 Notes section (lines 197-209) for full details.
 
 ---
 
-## Day 7 (Sunday): Demo + Documentation
+## Day 7 (Sunday): Continue Testing Implementation
 
 ### Goal
-Create demo script and polish
+Complete comprehensive testing infrastructure (Days 4-5 catch-up continuation)
 
 ### Tasks
-- [ ] Step 15: Create demo script (~1 hour)
-  - Create `scripts/demo_solver.py`
-  - Demonstrate Lorenz system
-  - Demonstrate Pendulum system
-  - Demonstrate Glucose-insulin system
-  - Print summary statistics
-- [ ] Create Jupyter notebook (~2 hours)
-  - Create `notebooks/glucose_insulin_demo.ipynb`
-  - Load Van Riel FSIGT data
-  - Fit glucose minimal model
-  - Fit insulin minimal model
-  - Visualize trajectories
-  - Compare to published results
-  - Add markdown explanations
-- [ ] Polish README (optional) (~30 min)
-  - Add usage examples
-  - Add installation instructions
-  - Update status checklist
-- [ ] Final quality check
-  - Run all tests
-  - Run all quality tools
-  - Verify demo script works
-- [ ] Commit everything to git
-  - Clean commit history
-  - Meaningful commit messages
-  - Push to remote (optional)
+- [ ] Continue comprehensive testing from Day 6
+  - Complete remaining test modules (plotting, supporting, quality)
+  - Follow DAY6_TESTING_ARCHITECTURE_PLAN.md
+  - Target: 80%+ coverage by end of day
+- [ ] Run quality checks (black, ruff, mypy)
+- [ ] Address coverage gaps if needed
 
 ### Estimated Time
-4-5 hours
+6-8 hours
 
 ### End-of-Day Checkpoint
-- [ ] Demo script runs successfully
-- [ ] Jupyter notebook renders nicely
-- [ ] All code committed to git
-- [ ] README updated
-- [ ] Ready for Sunday checkpoint
-
-### **Phase 1.5 Complete! 🎉**
+- [ ] Testing ~90% complete
+- [ ] All test modules written
+- [ ] Quality checks run
+- [ ] Ready for final integration Monday
 
 ### Notes
+
+**Timeline Adjustment (Jan 17):**
+Shifted from original "Demo + Documentation" to testing continuation. Comprehensive testing requires 7-10 hours total (started Day 6 Saturday evening, continuing Day 7 Sunday). Demo + docs deferred to Day 8 (Monday).
+
+---
+
+## Day 8 (Monday): Testing Complete + Demo + Documentation
+
+### Goal
+Finalize testing, create demo, polish documentation
+
+### Tasks
+- [ ] **Morning: Complete testing (2-3 hours)**
+  - Finish any remaining tests from Day 7
+  - Final pytest run with coverage verification
+  - Ensure 80%+ coverage achieved
+  - Git commit: "test: add comprehensive unit test suite (Day 4+5 catch-up)"
+
+- [ ] **Afternoon: Demo + Documentation (2-3 hours)**
+  - Create `scripts/demo_solver.py`
+    - Demonstrate Lorenz system (chaotic attractor)
+    - Demonstrate Pendulum system (damped oscillation)
+    - Show solver method selection + auto-fallback
+    - Print summary statistics
+  - Update README with Phase 1 completion status
+    - Usage examples
+    - Installation instructions
+    - Testing instructions
+  - Update SPRINT_TRACKING.md with week summary
+  - Final verification: run all tests, run demo, verify examples/
+
+### Estimated Time
+4-6 hours
+
+### End-of-Day Checkpoint
+- [ ] All tests passing (pytest tests/unit/ -v)
+- [ ] Coverage ≥80%
+- [ ] Demo script works
+- [ ] Documentation updated
+- [ ] All code committed to git
+- [ ] **Phase 1 Complete! 🎉**
+
+### **Phase 1 Complete! 🎉**
+
+### Notes
+
+**Timeline Adjustment (Jan 17):**
+Day 8 now completes Phase 1 instead of Day 7. Comprehensive testing + demo + docs require full Day 7 + Day 8 morning/afternoon.
 
 
 ---
 
-## Day 8 (Monday): Decision Point
+## Day 9 (Tuesday): Start Lean Architecture (Phase 2)
+
+### Goal
+Begin Python-Lean bridge architecture design and implementation
+
+### Tasks
+- [ ] Review PHASE2_3_LEAN_BRIDGE.md architecture design
+- [ ] Install Lean 4 toolchain
+- [ ] Design JSON schema for system representation
+- [ ] Create initial Lean subprocess runner prototype
+- [ ] Document Phase 2 approach in architecture files
+
+### Estimated Time
+Full day exploration + initial implementation
+
+### Notes
+
+**Phase 2 Start (Jan 21):**
+With Phase 1 complete (solver + visualization + comprehensive tests), begin Lean 4 integration work. Focus on minimal Python-Lean communication before full formalization.
+
+---
+
+## Day 10+ (Wednesday+): Decision Point
 
 ### Goal
 Assess progress and decide next steps
@@ -533,9 +580,10 @@ At the end of each day, update the SPRINT_TRACKING.md file with:
 | 3 (Wed) | Generic Solver + Visualization | ✅ Complete | Solver + full viz architecture complete Day 5 |
 | 4 (Thu) | Testing Infrastructure | 🔜 Not Started | Deferred to catch-up |
 | 5 (Fri) | Quality Checks | 🔜 Not Started | Deferred to catch-up |
-| 6 (Sat) | Visual Validation | ✅ Complete | 7 plots generated, architecture validated |
-| 7 (Sun) | TBD | 🔜 Not Started | Testing/Quality catch-up or glucose models |
-| 8 (Mon) | **Decision Point** | 🔜 Not Started | |
+| 6 (Sat) | Visual Validation + Testing Start | ⏳ In Progress | 7 plots ✅, testing plan approved, fixtures next |
+| 7 (Sun) | Testing Implementation | 🔜 Not Started | Continue comprehensive testing (Steps 3-6) |
+| 8 (Mon) | Testing Complete + Demo | 🔜 Not Started | Finish tests, demo script, Phase 1 complete |
+| 9 (Tue) | **Start Lean Architecture (Phase 2)** | 🔜 Not Started | Python-Lean bridge design |
 
 **Legend:**
 - 🔜 Not Started
