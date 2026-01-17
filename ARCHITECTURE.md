@@ -228,6 +228,58 @@ Data analysis pipeline doesn't re-run statistical model for each visualization -
 
 ---
 
+## Future Enhancements
+
+### Solver Timeout Parameter
+
+**Consider adding:** Wall-clock timeout parameter to `solve_ode()` to prevent indefinite execution in production scenarios.
+
+**Motivation:**
+- Pathological systems (e.g., finite-time singularities) or stiff problems may cause solver hangs
+- Current mitigation: `auto_fallback=True` helps but doesn't guarantee termination
+- Production use cases may require hard timeout constraints
+
+**Proposed API:**
+```python
+solve_ode(system, t_span, y0, method="RK45", auto_fallback=True, timeout=30.0)
+```
+
+**Implementation Challenges:**
+- scipy's solve_ivp has no built-in wall-clock timeout
+- Signal-based timeouts (signal.alarm) not portable to Windows
+- Threading-based interrupts may not work reliably with C-level numerical code
+- Process-based timeout (concurrent.futures) adds serialization/overhead complexity
+
+**Current Workaround:**
+Users can wrap `solve_ode()` calls in their own timeout mechanism if needed.
+
+**Decision:** Deferred to future phase due to complexity vs. benefit trade-off and scipy API limitations.
+
+### Additional Test Coverage (If Needed)
+
+**Consider adding:** Error message validation, logging output tests, numerical accuracy tests against analytical solutions.
+
+**Deferred test types:**
+
+1. **Error Message Validation** (TestErrorHandling)
+   - Would verify: Exception messages contain method names, descriptive failure info
+   - Skipped: Brittle (message wording changes break tests), low value (exception type sufficient), presentation not behavior
+
+2. **Logging Output Tests** (TestLogging)
+   - Would verify: Log statements present, fallback warnings emitted, method selection logged
+   - Skipped: Brittle (log formatting changes break tests), observability not correctness, validated during manual testing
+
+3. **Numerical Accuracy Tests** (TestNumericalAccuracy)
+   - Would verify: Solutions match analytical reference (exponential decay, harmonic oscillator)
+   - Skipped: Thin wrapper around scipy (trust upstream accuracy), system implementations simple (literature formulas), current tests validate wiring (IC preservation, endpoints)
+   - Value: Medium for catching system equation bugs, but systems tests verify physical behavior
+
+**When to add:** If production issues arise from missing validation, or for portfolio polish demonstrating numerical methods rigor.
+
+**Current coverage (Day 6):** 8 behavioral tests validate solver correctness (convergence, method selection, error handling, auto-fallback).
+
+---
+
 ## Timeline Reference
 
 See SPRINT_TRACKING.md for detailed timeline of when these decisions were made and how implementation progressed.
