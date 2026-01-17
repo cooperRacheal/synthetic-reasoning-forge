@@ -205,7 +205,7 @@ Complete Step 9 (Generic solver wrapper) + validate with trajectory plots
 - Proved Strategy+Factory pattern delivers on extensibility promise
 - Git commit + push: "feat(validation): add visual validation suite with biologically relevant defaults"
 
-**Status:** Day 3 visualization work 100% complete ✅. Visual validation complete ✅ (Day 6). Testing (Day 4) and quality checks (Day 5) remain as catch-up priorities for Day 7.
+**Status:** Day 3 visualization work 100% complete ✅. Visual validation complete ✅ (Day 6). Unit testing 27 tests complete ✅ (solver/systems/plotting layers). Coverage analysis (Step 6) and quality checks (black/ruff/mypy) remain for Day 7.
 
 
 ---
@@ -590,7 +590,7 @@ At the end of each day, update the SPRINT_TRACKING.md file with:
 | 3 (Wed) | Generic Solver + Visualization | ✅ Complete | Solver + full viz architecture complete Day 5 |
 | 4 (Thu) | Testing Infrastructure | 🔜 Not Started | Deferred to catch-up |
 | 5 (Fri) | Quality Checks | 🔜 Not Started | Deferred to catch-up |
-| 6 (Sat) | Visual Validation + Testing Start | ⏳ In Progress | 7 plots ✅, testing plan approved, fixtures next |
+| 6 (Sat) | Visual Validation + Testing Start | ⏳ In Progress | 7 plots ✅, 27 unit tests complete (solver/systems/plotting), ADR #9, coverage check next |
 | 7 (Sun) | Testing Implementation | 🔜 Not Started | Continue comprehensive testing (Steps 3-6) |
 | 8 (Mon) | Testing Complete + Demo | 🔜 Not Started | Finish tests, demo script, Phase 1 complete |
 | 9 (Tue) | **Start Lean Architecture (Phase 2)** | 🔜 Not Started | Python-Lean bridge design |
