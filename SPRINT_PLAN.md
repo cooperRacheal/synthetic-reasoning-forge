@@ -129,9 +129,9 @@ Complete Step 9 (Generic solver wrapper) + validate with trajectory plots
   - [x] Implement `base.py` (PhasePortraitPlotter ABC) ✅
   - [x] Create `plotting/__init__.py` (package marker) ✅
   - [x] Implement `plotters.py` (2D/3D concrete plotters) ✅
-  - [ ] Implement `factory.py` (PlotterFactory registry)
-  - [ ] Implement `__init__.py` (public API with plot_phase_portrait function)
-  - [ ] Integrate optional plotting into solver
+  - [x] Implement `factory.py` (PlotterFactory registry) ✅ (Day 5)
+  - [x] Implement `__init__.py` (public API with plot_phase_portrait function) ✅ (Day 5)
+  - [ ] Integrate optional plotting into solver (deferred)
   - [ ] Test: Plot Lorenz phase portrait (verify chaotic attractor)
   - [ ] Test: Plot Pendulum trajectories (verify damped oscillation)
 
@@ -149,13 +149,13 @@ Complete Step 9 (Generic solver wrapper) + validate with trajectory plots
 - [x] PhasePortraitPlotter ABC implemented ✅
 - [x] plotting/__init__.py created (package marker) ✅
 - [x] Concrete plotters (2D/3D) implemented ✅
-- [ ] Factory registry implemented
-- [ ] plotting/__init__.py public API (plot_phase_portrait function)
-- [ ] Integration with solver complete
+- [x] Factory registry implemented ✅ (Day 5)
+- [x] plotting/__init__.py public API (plot_phase_portrait function) ✅ (Day 5)
+- [ ] Integration with solver complete (deferred)
 - [ ] Visual validation: Lorenz attractor renders correctly
 - [ ] Visual validation: Pendulum phase portrait shows damped oscillation
 - [x] Git commit: "feat: add generic ODE solver wrapper" ✅
-- [ ] Git commit: "feat: implement Strategy pattern visualization architecture"
+- [x] Git commit: "feat(plotting): implement PlotterFactory and public API" ✅ (Day 5)
 
 ### Notes
 **Day 2:** Completed solver early. Created tests/test_solver.py, added BlowUpSystem for error handling.
@@ -269,6 +269,14 @@ Complete Steps 13-14 (Quality tooling)
 Implement glucose and insulin minimal models (Phase 1.5)
 
 ### Tasks
+- [ ] **Refactor PlotterFactory registry to Enum keys** (~30 min)
+  - Create PlotType enum in factory.py
+  - Update registry: int keys → Enum keys (PlotType.PHASE_2D, etc.)
+  - Update create() signature: `create(plot_type: PlotType, ...)`
+  - Update plot_phase_portrait() to infer PlotType from dimensionality
+  - Fix tests to use PlotType enum
+  - **Rationale:** int keys insufficient for bifurcation diagrams (2D but not phase portraits)
+  - **Context:** Technical debt from Day 5, documented in DESIGN_DECISIONS.md
 - [ ] Implement `GlucoseMinimalModel` (~1 hour)
   - Create `src/logic/systems/glucose.py`
   - Equations 9-10 from Van Riel paper

@@ -560,27 +560,64 @@ class PhasePortraitPlotter(ABC):
 
 3. **Factory Registry** (`factory.py`):
 ```python
+class PlotterNotFoundError(ForgeError):
+    """Raised when no plotter exists for input dimensionality."""
+
 class PlotterFactory:
-    _registry = {
+    _registry: dict[int, Type[PhasePortraitPlotter]] = {
         2: TwoDimensionalPlotter,
         3: ThreeDimensionalPlotter,
     }
 
     @classmethod
     def create(cls, n_dim: int) -> PhasePortraitPlotter:
-        """Select plotter based on state dimensionality."""
+        """Lookup plotter from registry, instantiate, return."""
+        if n_dim not in cls._registry:
+            raise PlotterNotFoundError(f"No plotter for {n_dim}D systems")
+        return cls._registry[n_dim]()
+
+    @classmethod
+    def register(cls, n_dim: int, plotter_class: Type[PhasePortraitPlotter]) -> None:
+        """Add plotter to registry - enables Open/Closed Principle."""
+        cls._registry[n_dim] = plotter_class
 ```
+
+**Note (Day 5):** Current registry uses `int` keys (2, 3) for dimensionality. This creates semantic collision for Day 6 bifurcation work (bifurcation diagrams are 2D but not phase portraits). Enum-based keys (`PlotType.PHASE_2D`, `PlotType.BIFURCATION`) refactoring scheduled for Day 6. Technical debt documented in `notes/DESIGN_DECISIONS.md`.
 
 4. **Public API** (`__init__.py`):
 ```python
-def plot_phase_portrait(t, y, config=None, save_path=None):
-    """Generic plotting function - automatically selects appropriate plotter."""
-    plotter = PlotterFactory.create(y.shape[0])
-    return plotter.plot(t, y, config=config, save_path=save_path)
+# Public exports (information hiding via __all__)
+__all__ = [
+    'plot_phase_portrait',      # Main entry point
+    'PlotConfig',               # Configuration dataclass
+    'PlotterFactory',           # Advanced: register custom plotters
+    'PhasePortraitPlotter',     # Advanced: implement custom plotters
+    'PlotterNotFoundError',     # Exception handling
+]
+
+def plot_phase_portrait(
+    t: NDArray[np.float64],
+    y: NDArray[np.float64],
+    labels: Optional[list[str]] = None,
+    title: Optional[str] = None,
+    config: Optional[PlotConfig] = None,
+    save_path: Optional[str] = None
+) -> plt.Figure:
+    """Facade function - automatically selects appropriate plotter.
+
+    Infers dimensionality from y.shape[0], dispatches to factory.
+    """
+    n_dim = y.shape[0]  # Extract state count from solution array
+    plotter = PlotterFactory.create(n_dim)
+    return plotter.plot(t, y, labels=labels, title=title,
+                        save_path=save_path, config=config)
 ```
 
-**Integration with Solver:**
+**Information Hiding (Day 5):** Concrete plotter classes (`TwoDimensionalPlotter`, `ThreeDimensionalPlotter`) are NOT exported. Users access plotters via factory, preventing misuse (can't instantiate wrong plotter for data) and enabling refactoring without breaking user code. Exports interfaces (ABC), factories, and facade function only.
+
+**Proposed Integration with Solver (NOT YET IMPLEMENTED):**
 ```python
+# Future enhancement - add optional plotting to solve_ode()
 def solve_ode(system, t_span, y0, method="RK45", plot=False, save_path=None):
     sol = scipy.integrate.solve_ivp(...)
 
@@ -589,6 +626,15 @@ def solve_ode(system, t_span, y0, method="RK45", plot=False, save_path=None):
         plot_phase_portrait(sol.t, sol.y, save_path=save_path)
 
     return sol
+```
+
+**Current Usage (Manual):**
+```python
+from src.logic.solver import solve_ode
+from src.logic.plotting import plot_phase_portrait
+
+sol = solve_ode(system, t_span, y0)
+fig = plot_phase_portrait(sol.t, sol.y, labels=['x', 'y', 'z'], title='System')
 ```
 
 **Benefits:**
@@ -616,7 +662,14 @@ def solve_ode(system, t_span, y0, method="RK45", plot=False, save_path=None):
 - [x] Generic ODE solver (`solver.py`)
 - [x] Lorenz and Pendulum test systems
 - [x] Visualization architecture (Strategy pattern)
-- [ ] Plotting implementation (base, plotters, factory)
+- [x] Plotting implementation (base, plotters, factory, public API) - Days 3-5
+  - PlotConfig dataclass (config.py)
+  - PhasePortraitPlotter ABC (base.py)
+  - TwoDimensionalPlotter, ThreeDimensionalPlotter (plotters.py)
+  - PlotterFactory registry with int keys (factory.py) - Enum refactoring deferred to Day 6
+  - plot_phase_portrait() facade function (__init__.py)
+  - Information hiding via __all__ exports
+- [ ] Visual validation (Lorenz + Pendulum plots)
 - [ ] Unit tests with 80%+ coverage
 - [ ] Glucose-insulin minimal models
 - [ ] Parameter estimation (`scipy.optimize.least_squares`)
@@ -789,7 +842,7 @@ Once you prove glucose-insulin ≅ PID controller:
 
 ---
 
-**Last Updated:** 2026-01-14
+**Last Updated:** 2026-01-16
 **Author:** Claude Sonnet 4.5 (architecture design)
 **Project:** Synthetic Reasoning Forge
-**Status:** Pre-Alpha (Phase 1 in progress - Day 3 visualization architecture)
+**Status:** Pre-Alpha (Phase 1 in progress - Day 5, visualization complete, testing pending)

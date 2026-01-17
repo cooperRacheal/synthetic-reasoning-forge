@@ -77,8 +77,8 @@ class TwoDimensionalPlotter(PhasePortraitPlotter):
             ax.set_xlabel(labels[0], fontsize=12)
             ax.set_ylabel(labels[1], fontsize=12)
             if title:
-            	ax.set_title(title, fontsize=14)
-            	
+                ax.set_title(title, fontsize=14)
+
             # Grid and legend
             if config.show_grid:
                 ax.grid(True, alpha=0.3)
