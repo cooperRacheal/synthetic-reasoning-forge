@@ -107,12 +107,15 @@ on reviewing Python syntax and writing the code myself.
 Complete Step 9 (Generic solver wrapper) + validate with trajectory plots
 
 ### Tasks
-- [x] Step 9: Implement solve_ode() function ✅ (Done Day 2)
+- [x] Step 9: Implement solve_ode() function ✅ (Done Day 2, enhanced Day 5)
   - [x] Create `src/logic/solver.py`
   - [x] Wrap `scipy.integrate.solve_ivp`
   - [x] Add error handling with `SolverConvergenceError`
   - [x] Add logging statements
   - [x] Type annotations with Protocol
+  - [x] Add `method` parameter for algorithm selection (RK45, LSODA, Radau, BDF) ✅ (Day 5)
+  - [x] Add `auto_fallback` parameter with LSODA retry for stiff systems ✅ (Day 5)
+  - [x] Update docstring with comprehensive parameter documentation ✅ (Day 5)
 - [x] Test with Lorenz system ✅
   - [x] Check logging output
 - [x] Test with Pendulum system ✅
@@ -156,6 +159,7 @@ Complete Step 9 (Generic solver wrapper) + validate with trajectory plots
 - [ ] Visual validation: Pendulum phase portrait shows damped oscillation
 - [x] Git commit: "feat: add generic ODE solver wrapper" ✅
 - [x] Git commit: "feat(plotting): implement PlotterFactory and public API" ✅ (Day 5)
+- [x] Git commit: "feat(solver): add method selection and auto-fallback for stiff systems" ✅ (Day 5)
 
 ### Notes
 **Day 2:** Completed solver early. Created tests/test_solver.py, added BlowUpSystem for error handling.
@@ -537,6 +541,40 @@ At the end of each day, update the SPRINT_TRACKING.md file with:
 - Prove stability theorem
 - End-to-end demo: Python sends system → Lean proves property
 - Document the workflow
+
+---
+
+## Deferred Features
+
+### Solver Plotting Integration (Optional Convenience)
+**Status:** Deferred to future sprint
+**Reason:** Non-critical convenience feature, behind schedule on Phase 1 core
+
+**Proposed Feature:**
+Add optional plotting parameters to `solve_ode()` for one-line solve+plot workflow:
+```python
+# Current (two-step, fully functional)
+sol = solve_ode(system, t_span, y0)
+plot_phase_portrait(sol.t, sol.y, save_path='output.png')
+
+# Future (one-step convenience)
+sol = solve_ode(system, t_span, y0, plot=True, save_path='output.png')
+```
+
+**Implementation:**
+- Add `plot: bool = False` parameter
+- Add `plot_config: Optional[PlotConfig] = None` parameter
+- Add `save_path: Optional[str] = None` parameter
+- Lazy import: `from src.logic.plotting import plot_phase_portrait` inside `if plot:` block
+- Forward reference: `Optional["PlotConfig"]` to avoid circular import
+
+**Trade-offs:**
+- ✓ Convenience (one line instead of two)
+- ✗ Couples solver to plotting (violates separation of concerns)
+- ✗ Added complexity for minimal gain
+- ✗ Current two-step workflow already clean
+
+**Decision:** Implement if time permits after Phase 1 completion. Not required for core functionality.
 
 ---
 
