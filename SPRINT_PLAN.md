@@ -359,32 +359,43 @@ See Day 3 Notes section (lines 197-209) for full details.
 
 ---
 
-## Day 7 (Sunday Jan 18): Continue Testing Implementation
+## Day 7 (Sunday Jan 18): Phase 2A - SymbolicMixin Foundation
 
 ### Goal
-Complete comprehensive testing infrastructure (Days 4-5 catch-up continuation)
+Implement symbolic equation extraction for LorenzSystem, validate mixin pattern and sympy integration.
 
-### Tasks
-- [ ] Continue comprehensive testing from Day 6
-  - Complete remaining test modules (plotting, supporting, quality)
-  - Follow DAY6_TESTING_ARCHITECTURE_PLAN.md
-  - Target: 80%+ coverage by end of day
-- [ ] Run quality checks (black, ruff, mypy)
-- [ ] Address coverage gaps if needed
+### Tasks (Phase 2A - Steps 1-8)
+- [ ] Step 1: Add sympy dependency to pyproject.toml (5 min)
+- [ ] Step 2: Create lean_bridge module structure (5 min)
+- [ ] Step 3: Implement SymbolicMixin in symbolic.py (30-45 min)
+- [ ] Step 4: Extend LorenzSystem with SymbolicMixin (30-45 min)
+- [ ] Step 5: Update lean_bridge/__init__.py exports (5 min)
+- [ ] Step 6: Write tests for SymbolicMixin (10+ tests, 45-60 min)
+- [ ] Step 7: Verify backward compatibility - all Phase 1 tests pass (10 min)
+- [ ] Step 8: Manual validation - interactive sympy exploration (5 min)
 
 ### Estimated Time
-6-8 hours
+2-3 hours (teaching mode, first time with sympy)
 
-### End-of-Day Checkpoint
-- [ ] Testing ~90% complete
-- [ ] All test modules written
-- [ ] Quality checks run
-- [ ] Ready for final integration Monday
+### End-of-Day Checkpoint (Validation Gate)
+- [ ] ✅ Sympy installed and importable
+- [ ] ✅ SymbolicMixin implemented with lazy caching
+- [ ] ✅ LorenzSystem extended with symbolic support
+- [ ] ✅ 10+ tests passing for symbolic functionality
+- [ ] ✅ All 33 Phase 1 tests still pass (backward compatibility)
+- [ ] ✅ Manual validation confirms symbolic equations correct
+
+**Deliverable:**
+```python
+lorenz = LorenzSystem()
+equations = lorenz.get_symbolic_equations()
+# Returns: {'x': sigma*(y - x), 'y': x*(rho - z) - y, 'z': x*y - beta*z}
+```
 
 ### Notes
 
-**Timeline Adjustment (Jan 17):**
-Shifted from original "Demo + Documentation" to testing continuation. Comprehensive testing requires 7-10 hours total (started Day 6 Saturday evening, continuing Day 7 Sunday). Demo + docs deferred to Day 8 (Monday).
+**Phase 2 Strategy Change (Jan 17):**
+Adopted incremental/phased approach with 3 sub-phases (2A → 2B → 2C) instead of all-at-once implementation. User preference: validation checkpoints, no sympy/Lean experience. Timeline: Complete Phase 2 by Day 12 (Jan 24).
 
 ---
 
@@ -588,12 +599,13 @@ At the end of each day, update the SPRINT_TRACKING.md file with:
 | 1 (Mon) | Foundation Infrastructure | ✅ Complete | Steps 4-6 done Day 2 |
 | 2 (Tue) | Test Systems | ✅ Complete | Steps 7-8 done Day 2 |
 | 3 (Wed) | Generic Solver + Visualization | ✅ Complete | Solver + full viz architecture complete Day 5 |
-| 4 (Thu) | Testing Infrastructure | 🔜 Not Started | Deferred to catch-up |
-| 5 (Fri) | Quality Checks | 🔜 Not Started | Deferred to catch-up |
-| 6 (Sat) | Visual Validation + Testing Start | ⏳ In Progress | 7 plots ✅, 27 unit tests complete (solver/systems/plotting), ADR #9, coverage check next |
-| 7 (Sun) | Testing Implementation | 🔜 Not Started | Continue comprehensive testing (Steps 3-6) |
-| 8 (Mon) | Testing Complete + Demo | 🔜 Not Started | Finish tests, demo script, Phase 1 complete |
-| 9 (Tue) | **Start Lean Architecture (Phase 2)** | 🔜 Not Started | Python-Lean bridge design |
+| 4 (Thu) | Testing Infrastructure | ✅ Complete | Completed Day 6 (33 unit tests) |
+| 5 (Fri) | Quality Checks | ✅ Complete | Completed Day 6 (95% coverage, black, ruff) |
+| 6 (Sat) | Visual Validation + Phase 2 Planning | ✅ Complete | 7 plots, 33 tests, Phase 1 merged (PR #1), Phase 2A plan approved |
+| 7 (Sun) | **Phase 2A: SymbolicMixin** | ⏳ In Progress | Add sympy, implement mixin, extend LorenzSystem, tests |
+| 8-9 (Mon-Tue) | **Phase 2B: Serialization** | 🔜 Not Started | ODESystemMetadata, extend DampedPendulum, JSON tests |
+| 10-11 (Wed-Thu) | **Phase 2C: Proof Request** | 🔜 Not Started | LeanProofRequest, factory functions, integration tests |
+| 12 (Fri) | **Phase 2 Complete** | 🔜 Not Started | Documentation, buffer for catchup |
 
 **Legend:**
 - 🔜 Not Started

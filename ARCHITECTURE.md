@@ -268,6 +268,458 @@ If production issues arise from untested matplotlib interactions, or for portfol
 
 ---
 
+## Phase 2: Python-Lean Bridge Architecture
+
+### ADR #10: Symbolic Equation Strategy - Mixin Pattern
+
+**Decision:** Add symbolic equation capabilities to ODE systems via `SymbolicMixin` class with lazy symbolic generation using sympy.
+
+**Alternatives Considered:**
+
+1. **Modify existing classes in-place** (add `to_symbolic()` method directly to LorenzSystem)
+   - Pro: Simple, direct, no additional classes
+   - Con: Violates Open/Closed Principle, couples numerical computation to symbolic representation
+   - Con: Forces all systems to have symbolic support even if unused
+
+2. **Wrapper classes** (SerializableLorenzSystem wraps LorenzSystem)
+   - Pro: Clean separation of concerns
+   - Con: Boilerplate code duplication for each system
+   - Con: Dual class hierarchy (LorenzSystem vs SerializableLorenzSystem)
+   - Con: Violates DRY principle
+
+3. **Mixin Pattern** [CHOSEN]
+   - Pro: Composable via multiple inheritance
+   - Pro: Backward compatible (existing code unchanged)
+   - Pro: Single class definition (no wrappers)
+   - Pro: Reusable across all systems
+   - Con: Requires understanding multiple inheritance
+   - Con: Mixin methods added to class namespace
+
+**Architecture:**
+
+```python
+# src/logic/lean_bridge/symbolic.py
+
+class SymbolicMixin:
+    """Mixin adding symbolic equation capabilities to ODE systems."""
+
+    def get_symbolic_equations(self) -> dict[str, sp.Expr]:
+        """Lazy generation with caching."""
+        if not hasattr(self, '_symbolic_cache'):
+            self._symbolic_cache = self._build_symbolic_equations()
+        return self._symbolic_cache
+
+    def get_state_variables(self) -> list[str]:
+        """Return state variable names."""
+        return self._state_var_names
+
+    def _build_symbolic_equations(self) -> dict[str, sp.Expr]:
+        """Override in subclass."""
+        raise NotImplementedError
+
+
+# Usage in existing systems:
+class LorenzSystem(SymbolicMixin):
+    _state_var_names = ['x', 'y', 'z']
+
+    def f(self, t, y):
+        # Numerical implementation UNCHANGED
+        ...
+
+    def _build_symbolic_equations(self):
+        x, y, z = sp.symbols('x y z')
+        return {
+            'x': self.sigma * (y - x),
+            'y': x * (self.rho - z) - y,
+            'z': x * y - self.beta * z
+        }
+```
+
+**Rationale:**
+- **Backward compatible:** Existing numerical code sees no changes (LorenzSystem still works identically)
+- **On-demand generation:** Symbolic equations only created when explicitly requested (no overhead for solver)
+- **Cacheable:** Lazy evaluation via `_symbolic_cache` prevents regeneration on repeated calls
+- **Extensible:** Other systems inherit mixin, implement one method (`_build_symbolic_equations()`)
+- **Testable:** Can mock `_build_symbolic_equations()`, verify symbolic output independently
+
+**Trade-offs Accepted:**
+- **Complexity:** Mixin pattern less familiar than direct method addition
+- **Mitigation:** Excellent documentation, simple mixin implementation (no state, no complex logic)
+- **Namespace pollution:** Mixin adds 3 methods to each system class
+- **Mitigation:** All methods prefixed appropriately (`get_*`, `_build_*`)
+
+**Impact:**
+- Enables Lean bridge without modifying Phase 1 solver
+- Future systems automatically get symbolic support by inheriting mixin
+- JSON serialization can extract symbolic equations for Lean formalization
+
+---
+
+### ADR #11: JSON Serialization Schema
+
+**Decision:** Create `ODESystemMetadata` dataclass capturing system type, parameters, state variables, and symbolic equations for Lean bridge communication.
+
+**JSON Schema:**
+
+```json
+{
+  "system_type": "LorenzSystem",
+  "state_dim": 3,
+  "state_variables": ["x", "y", "z"],
+  "parameters": {
+    "sigma": 10.0,
+    "rho": 28.0,
+    "beta": 2.6666666666666665
+  },
+  "equations": {
+    "x": "sigma*(y - x)",
+    "y": "x*(rho - z) - y",
+    "z": "x*y - beta*z"
+  }
+}
+```
+
+**Alternatives Considered:**
+
+1. **Minimal schema** (just equations and parameters)
+   - Pro: Smaller payload
+   - Con: Lean cannot reconstruct system type or validate dimensionality
+
+2. **Verbose schema** (include Jacobian, equilibria, stability analysis)
+   - Pro: Rich metadata for Lean
+   - Con: Premature - Phase 2 doesn't need this yet
+   - Con: Couples serialization to analysis results
+
+3. **Five-field schema** [CHOSEN]
+   - Pro: Self-contained (Lean can reconstruct system)
+   - Pro: Extensible (add fields later without breaking)
+   - Pro: Minimal but sufficient
+   - Con: Slightly verbose for simple cases
+
+**Implementation:**
+
+```python
+# src/logic/lean_bridge/serialization.py
+
+@dataclass
+class ODESystemMetadata:
+    """JSON-serializable metadata for ODE systems."""
+
+    system_type: str  # Class name (e.g., "LorenzSystem")
+    state_dim: int  # Dimension of state space
+    state_variables: list[str]  # Variable names (e.g., ['x', 'y', 'z'])
+    parameters: dict[str, float]  # Numeric parameters
+    equations: dict[str, str]  # Symbolic equations (sympy → string)
+
+    def to_json(self) -> dict[str, Any]:
+        """Convert to JSON-compatible dict."""
+        return asdict(self)
+
+    @classmethod
+    def from_ode_system(cls, system: Any) -> "ODESystemMetadata":
+        """Extract metadata from system implementing SymbolicODESystem."""
+        symbolic_eqs = system.get_symbolic_equations()
+        state_vars = system.get_state_variables()
+
+        equations_str = {
+            var: _sympy_to_lean_string(expr)
+            for var, expr in symbolic_eqs.items()
+        }
+
+        parameters = _extract_parameters(system)
+
+        return cls(
+            system_type=type(system).__name__,
+            state_dim=len(state_vars),
+            state_variables=state_vars,
+            parameters=parameters,
+            equations=equations_str
+        )
+```
+
+**Rationale:**
+- **Self-contained:** All information needed for Lean formalization
+- **Type-safe:** Dataclass provides structure validation
+- **Round-trip capable:** JSON serializable and deserializable
+- **Extensible:** Can add fields (equilibria, Jacobian, etc.) without breaking existing code
+- **Lean-compatible:** String equations can be parsed by Lean subprocess
+
+**Trade-offs Accepted:**
+- **Sympy → String conversion:** May not perfectly match Lean syntax initially
+- **Mitigation:** Phase 2.5 will refine `_sympy_to_lean_string()` with Lean parser feedback
+- **Parameter extraction fragility:** Relies on introspection (may grab wrong attributes)
+- **Mitigation:** Whitelist numeric public attributes only, add manual override option if needed
+
+**Future Extensions:**
+- Add `equilibria: list[NDArray]` field
+- Add `jacobian: dict[str, dict[str, str]]` field (symbolic Jacobian matrix)
+- Add `metadata: dict[str, Any]` for custom annotations
+
+---
+
+### ADR #12: LeanProofRequest API
+
+**Decision:** Create `LeanProofRequest` dataclass packaging mathematical conjectures for Lean verification, with method to generate Lean-compatible JSON.
+
+**Architecture:**
+
+```python
+# src/logic/lean_bridge/proof_request.py
+
+@dataclass
+class LeanProofRequest:
+    """Package mathematical conjecture for Lean verification."""
+
+    system1: ODESystemMetadata
+    system2: ODESystemMetadata
+    conjecture_type: str  # "structural_isomorphism", "stability_equivalence", etc.
+    parameter_correspondence: dict[str, str]  # e.g., {'k1/k3': 'Kp'}
+
+    def to_lean_json(self) -> dict[str, Any]:
+        """Generate JSON payload for Lean subprocess."""
+        return {
+            "system1": self.system1.to_json(),
+            "system2": self.system2.to_json(),
+            "conjecture": {
+                "type": self.conjecture_type,
+                "parameter_correspondence": self.parameter_correspondence,
+                "hypothesis": self._generate_hypothesis_string()
+            }
+        }
+
+    def _generate_hypothesis_string(self) -> str:
+        """Generate human-readable hypothesis."""
+        if self.conjecture_type == "structural_isomorphism":
+            return (
+                f"There exists a diffeomorphism φ: ℝ^{self.system1.state_dim} → "
+                f"ℝ^{self.system2.state_dim} such that the dynamics are conjugate"
+            )
+        return f"Conjecture of type {self.conjecture_type}"
+
+
+# Factory function
+def create_structural_isomorphism_request(
+    system1: Any,
+    system2: Any,
+    param_map: dict[str, str]
+) -> LeanProofRequest:
+    """Create structural isomorphism conjecture."""
+    return LeanProofRequest(
+        system1=ODESystemMetadata.from_ode_system(system1),
+        system2=ODESystemMetadata.from_ode_system(system2),
+        conjecture_type="structural_isomorphism",
+        parameter_correspondence=param_map
+    )
+```
+
+**Usage Example:**
+
+```python
+from src.logic.systems import LorenzSystem, DampedPendulum
+from src.logic.lean_bridge import create_structural_isomorphism_request
+
+lorenz = LorenzSystem(sigma=10.0, rho=28.0, beta=8/3)
+pendulum = DampedPendulum(length=1.0, damping=0.5)
+
+request = create_structural_isomorphism_request(
+    lorenz, pendulum,
+    param_map={'sigma/beta': 'damping/mass'}
+)
+
+lean_json = request.to_lean_json()
+# Future: subprocess_runner.verify(lean_json)
+```
+
+**Rationale:**
+- **Clean API:** Factory functions provide intuitive conjecture creation
+- **Type-safe:** Dataclass ensures required fields present
+- **JSON-serializable:** Ready for subprocess communication (Phase 2.5)
+- **Extensible:** Add new conjecture types without breaking existing code
+- **Testable:** Mock Lean subprocess, verify JSON structure
+
+**Conjecture Types Planned:**
+- `"structural_isomorphism"` - Diffeomorphism conjugating dynamics
+- `"stability_equivalence"` - Same stability properties
+- `"parameter_correspondence"` - Mathematical relationship between parameters
+- `"conservation_law"` - Preserved quantities
+
+**Future Extensions:**
+- Add `@dataclass` field for Lean timeout
+- Add `@dataclass` field for proof strategy hints
+- Add `verify()` method calling Lean subprocess
+
+---
+
+### ADR #13: Module Structure - src/logic/lean_bridge/
+
+**Decision:** Create new subpackage `src/logic/lean_bridge/` for Lean bridge components, keeping Phase 1 solver/systems unchanged.
+
+**Directory Structure:**
+
+```
+src/logic/lean_bridge/
+├── __init__.py          # Public API exports
+├── symbolic.py          # SymbolicMixin, SymbolicODESystem protocol
+├── serialization.py     # ODESystemMetadata, JSON conversion
+└── proof_request.py     # LeanProofRequest, factory functions
+```
+
+**Public API (`lean_bridge/__init__.py`):**
+
+```python
+from src.logic.lean_bridge.symbolic import SymbolicMixin, SymbolicODESystem
+from src.logic.lean_bridge.serialization import ODESystemMetadata
+from src.logic.lean_bridge.proof_request import (
+    LeanProofRequest,
+    create_structural_isomorphism_request
+)
+
+__all__ = [
+    "SymbolicMixin",
+    "SymbolicODESystem",
+    "ODESystemMetadata",
+    "LeanProofRequest",
+    "create_structural_isomorphism_request",
+]
+```
+
+**Alternatives Considered:**
+
+1. **Add to existing src/logic/solver.py**
+   - Pro: Fewer files
+   - Con: Couples solver to Lean bridge (violates Single Responsibility)
+   - Con: Module grows too large
+
+2. **Create separate top-level package src/lean_bridge/**
+   - Pro: Clear separation from logic
+   - Con: Breaks existing src/logic/ organization
+   - Con: Makes imports awkward
+
+3. **Subpackage under src/logic/** [CHOSEN]
+   - Pro: Isolated from solver/systems
+   - Pro: Clean import structure (from src.logic.lean_bridge import ...)
+   - Pro: Consistent with existing architecture (src/logic/plotting/, src/logic/systems/)
+
+**Rationale:**
+- **Isolation:** Lean bridge separate from numerical solver (can develop independently)
+- **Minimal:** Each module has single responsibility
+- **Importable:** Clean public API via `__init__.py`
+- **Extensible:** Add subprocess_runner.py later without refactoring existing code
+- **Testable:** Can test symbolic, serialization, proof_request modules independently
+
+**Future Modules (Phase 2.5+):**
+- `subprocess_runner.py` - Lean process management
+- `exceptions.py` - Lean-specific error types (LeanTimeoutError, LeanVerificationError)
+- `parsers.py` - Parse Lean output (proof/counterexample)
+
+---
+
+### ADR #14: Extending Systems - In-Place Mixin Inheritance
+
+**Decision:** Extend existing `LorenzSystem` and `DampedPendulum` classes by adding `SymbolicMixin` to inheritance chain, rather than creating wrapper classes.
+
+**Migration Pattern:**
+
+**Before (Phase 1):**
+```python
+class LorenzSystem:
+    def __init__(self, sigma=10.0, rho=28.0, beta=8/3):
+        self.sigma = sigma
+        self.rho = rho
+        self.beta = beta
+
+    def f(self, t, y):
+        # Numerical implementation
+        x_val, y_val, z_val = y
+        dx_dt = self.sigma * (y_val - x_val)
+        dy_dt = x_val * (self.rho - z_val) - y_val
+        dz_dt = x_val * y_val - self.beta * z_val
+        return np.array([dx_dt, dy_dt, dz_dt])
+```
+
+**After (Phase 2):**
+```python
+from src.logic.lean_bridge.symbolic import SymbolicMixin
+import sympy as sp
+
+class LorenzSystem(SymbolicMixin):
+    _state_var_names = ['x', 'y', 'z']  # NEW: Class attribute
+
+    def __init__(self, sigma=10.0, rho=28.0, beta=8/3):
+        self.sigma = sigma
+        self.rho = rho
+        self.beta = beta
+
+    def f(self, t, y):
+        # Numerical implementation (UNCHANGED)
+        x_val, y_val, z_val = y
+        dx_dt = self.sigma * (y_val - x_val)
+        dy_dt = x_val * (self.rho - z_val) - y_val
+        dz_dt = x_val * y_val - self.beta * z_val
+        return np.array([dx_dt, dy_dt, dz_dt])
+
+    def _build_symbolic_equations(self) -> dict[str, sp.Expr]:
+        """NEW: Generate symbolic equations."""
+        x, y, z = sp.symbols('x y z')
+        return {
+            'x': self.sigma * (y - x),
+            'y': x * (self.rho - z) - y,
+            'z': x * y - self.beta * z
+        }
+```
+
+**Alternatives Considered:**
+
+1. **Wrapper classes** (create SerializableLorenzSystem)
+   - Pro: Clean separation, no modification to existing classes
+   - Con: Dual hierarchy, boilerplate, violates DRY
+   - Con: Existing code must be updated to use wrappers
+
+2. **Decorator pattern**
+   - Pro: Flexible composition at runtime
+   - Con: More complex, harder to type-check
+   - Con: Overhead from delegation
+
+3. **In-place mixin inheritance** [CHOSEN]
+   - Pro: Single class definition (no wrappers)
+   - Pro: Backward compatible (existing code unchanged)
+   - Pro: DRY (no code duplication)
+   - Con: Modifies existing classes
+
+**Backward Compatibility Verification:**
+
+```python
+# All existing code continues working
+lorenz = LorenzSystem(sigma=10.0, rho=28.0, beta=8/3)
+assert lorenz.sigma == 10.0  # ✓ Parameter access
+sol = solve_ode(lorenz, (0, 10), y0)  # ✓ Solver integration
+assert sol.success  # ✓ No behavioral changes
+
+# New symbolic capabilities available
+equations = lorenz.get_symbolic_equations()  # ✓ New feature
+assert 'x' in equations  # ✓ Returns dict of sympy expressions
+```
+
+**Rationale:**
+- **Minimal disruption:** One line change (add mixin to inheritance)
+- **Single source of truth:** No wrapper/wrapped dual classes
+- **Composable:** Can add other mixins later (e.g., JacobianMixin, EquilibriaMixin)
+- **Type-safe:** Mixin provides protocol interface
+
+**Trade-offs Accepted:**
+- **Modifies existing files:** Phase 1 systems lorenz.py and pendulum.py changed
+- **Mitigation:** Changes minimal (inherit mixin, add one method), all Phase 1 tests must pass
+- **Import dependency:** Systems now import from lean_bridge
+- **Mitigation:** Lean_bridge has no dependencies on solver (clean separation)
+
+**Testing Strategy:**
+1. Run all Phase 1 tests → must pass unchanged
+2. Add new tests for symbolic methods
+3. Test JSON serialization independently
+4. Integration test: solve_ode() → serialize → verify JSON
+
+---
+
 ## Future Enhancements
 
 ### Solver Timeout Parameter
