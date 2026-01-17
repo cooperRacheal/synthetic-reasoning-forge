@@ -11,4 +11,12 @@ lean/build/
 
 # System
 .DS_Store
+
+# Private working documents
 lean/README_LOCAL.md
+notes/
+
+# Generated visualizations
+data/*.png
+data/*.jpg
+data/*.pdf

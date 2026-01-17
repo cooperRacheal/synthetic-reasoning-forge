@@ -44,7 +44,11 @@ classifiers = [
     "Topic :: Scientific/Engineering :: Medical Science Apps.",
     "Topic :: Education :: Computer Aided Instruction (CAI)",
 ]
-dependencies = []
+dependencies = [
+    "numpy>=1.24,<3.0",
+    "scipy>=1.11,<2.0",
+    "matplotlib>=3.8,<4.0",
+]
 
 [project.optional-dependencies]
 dev = [
@@ -55,7 +59,7 @@ dev = [
 ]
 
 [tool.hatch.build.targets.wheel]
-packages = ["src/logic"]
+packages = ["src"]
 
 [tool.black]
 line-length = 88
@@ -71,6 +75,8 @@ select = ["E", "F", "I", "UP", "B", "SIM"]
 python_version = "3.11"
 strict = true
 warn_return_any = true
+explicit_package_bases = true
+mypy_path = "src"
 
 [tool.pytest.ini_options]
 testpaths = ["tests"]
