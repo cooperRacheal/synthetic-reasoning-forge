@@ -228,6 +228,46 @@ Data analysis pipeline doesn't re-run statistical model for each visualization -
 
 ---
 
+## ADR #9: Plotter Testing Strategy - Integration First, Mocking Later
+
+**Decision:** Test plotters using integration approach (call plot(), verify returns Figure) rather than comprehensive matplotlib mocking. Defer mocking enhancement to future phase if needed.
+
+**Alternatives Considered:**
+
+1. **Option 1: Comprehensive matplotlib mocking** (pytest-mock/unittest.mock)
+   - Pro: Isolates plotter logic from matplotlib, verifies exact method calls
+   - Con: Brittle (tight coupling to matplotlib API), complex test setup, high maintenance
+   - Tests: Mock `plt.subplots()`, `ax.plot()`, `ax.set_xlabel()`, etc. Verify called with correct parameters.
+
+2. **Option 2: Integration testing** [CHOSEN for Phase 1]
+   - Pro: Simple, fast to write, tests actual behavior, less brittle
+   - Con: Doesn't verify internal matplotlib calls, slower tests (creates actual figures)
+   - Tests: Call `plot()` with synthetic data, verify returns `plt.Figure`, verify file saved if `save_path` provided
+
+**Rationale:**
+- **Time pressure:** Day 6 testing sprint - Option 2 delivers coverage faster
+- **Brittleness concern:** Mocking matplotlib tightly couples tests to implementation details (if we refactor plotting code but maintain behavior, mocked tests would break)
+- **Sufficient coverage:** Option 2 validates plotters produce figures and respect parameters (file saving, config)
+- **Portfolio value:** Demonstrates pragmatic testing trade-offs under schedule constraints
+
+**Current tests (Option 2):**
+- `test_2d_plotter_returns_figure` - Verify returns matplotlib Figure object
+- `test_3d_plotter_returns_figure` - Same for 3D
+- `test_2d_plotter_default_labels` - Call without labels, verify no error
+- `test_3d_plotter_default_labels` - Same for 3D
+- `test_2d_plotter_saves_file` - Provide save_path, verify file created
+- `test_3d_plotter_saves_file` - Same for 3D
+
+**Future enhancement (Option 1):**
+If production issues arise from untested matplotlib interactions, or for portfolio polish demonstrating mocking expertise, add comprehensive mocking tests that verify:
+- Correct matplotlib methods called (`plot()`, `set_xlabel()`, `legend()`, etc.)
+- Parameters passed correctly (line width, colors, marker sizes from PlotConfig)
+- Conditional logic (markers only shown if `config.show_markers=True`)
+
+**Trade-off:** Pragmatic coverage now, detailed verification deferred.
+
+---
+
 ## Future Enhancements
 
 ### Solver Timeout Parameter
