@@ -359,7 +359,7 @@ See Day 3 Notes section (lines 197-209) for full details.
 
 ---
 
-## Day 7 (Sunday): Continue Testing Implementation
+## Day 7 (Sunday Jan 18): Continue Testing Implementation
 
 ### Goal
 Complete comprehensive testing infrastructure (Days 4-5 catch-up continuation)
@@ -388,7 +388,7 @@ Shifted from original "Demo + Documentation" to testing continuation. Comprehens
 
 ---
 
-## Day 8 (Monday): Testing Complete + Demo + Documentation
+## Day 8 (Monday Jan 19): Testing Complete + Demo + Documentation
 
 ### Goal
 Finalize testing, create demo, polish documentation
@@ -434,7 +434,7 @@ Day 8 now completes Phase 1 instead of Day 7. Comprehensive testing + demo + doc
 
 ---
 
-## Day 9 (Tuesday): Start Lean Architecture (Phase 2)
+## Day 9 (Tuesday Jan 20): Start Lean Architecture (Phase 2)
 
 ### Goal
 Begin Python-Lean bridge architecture design and implementation
@@ -451,12 +451,22 @@ Full day exploration + initial implementation
 
 ### Notes
 
-**Phase 2 Start (Jan 21):**
+**Phase 2 Start (Jan 20):**
 With Phase 1 complete (solver + visualization + comprehensive tests), begin Lean 4 integration work. Focus on minimal Python-Lean communication before full formalization.
 
 ---
 
-## Day 10+ (Wednesday+): Decision Point
+## Day 10 (Wednesday Jan 21): Continue Lean Architecture
+
+### Goal
+Continue Phase 2 implementation or assess progress
+
+### Tasks
+- TBD based on Day 9 progress
+
+---
+
+## Day 11 (Thursday Jan 22): Sprint End / Decision Point
 
 ### Goal
 Assess progress and decide next steps
