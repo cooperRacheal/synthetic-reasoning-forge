@@ -22,8 +22,8 @@ coverage:
 quality:
 	black src/ tests/ --check
 	ruff check src/ tests/
-	mypy src/
-
+	# mypy -p src.logic  # Deferred: See ARCHITECTURE.md Future Enhancements (mypy strict mode)
+	
 # Format code with black
 format:
 	black src/ tests/

@@ -34,17 +34,13 @@ class PlotConfig:
     """
 
     figsize: tuple[int, int] = (10, 8)
-    dpi : int = 100
-    style : str = "seaborn-v0_8-darkgrid"
-    save_format : str = "png"
+    dpi: int = 100
+    style: str = "seaborn-v0_8-darkgrid"
+    save_format: str = "png"
     show_grid: bool = False
     line_width: float = 1.5
     color: str = "auto"
     alpha: float = 1.0
     marker_size: float = 8.0
     show_markers: bool = True
-    aspect: str = "auto"    
-
-
-
-
+    aspect: str = "auto"

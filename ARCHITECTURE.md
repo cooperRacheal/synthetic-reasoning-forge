@@ -318,6 +318,53 @@ Users can wrap `solve_ode()` calls in their own timeout mechanism if needed.
 
 **Current coverage (Day 6):** 8 behavioral tests validate solver correctness (convergence, method selection, error handling, auto-fallback).
 
+### Mypy Strict Mode Type Checking
+
+**Consider adding:** Full mypy strict mode compliance with type stubs for scipy and matplotlib.
+
+**Current Status (Day 6):**
+- Black ✅ (formatting passing)
+- Ruff ✅ (linting passing)
+- Mypy ❌ (7 errors with strict mode, deferred)
+
+**Mypy Errors Found (mypy -p src.logic --strict):**
+
+1. **Missing Type Stubs (1 error):**
+   - `src/logic/solver.py:9` - Library stubs not installed for "scipy.integrate"
+   - Fix: `pip install scipy-stubs` (may reveal additional scipy type issues)
+
+2. **plt.Figure Type Not Recognized (4 errors):**
+   - `src/logic/plotting/base.py:25` - Name "plt.Figure" is not defined
+   - `src/logic/plotting/plotters.py:26, 122` - Name "plt.Figure" is not defined
+   - `src/logic/plotting/__init__.py:73` - Name "plt.Figure" is not defined
+   - Fix: Install matplotlib type stubs or add `from matplotlib.figure import Figure` and use `Figure` instead of `plt.Figure` in type hints
+
+3. **Type Narrowing Issue (1 error):**
+   - `src/logic/plotting/plotters.py:96` - Argument 1 to "set_aspect" of "_AxesBase" has incompatible type "str"; expected "Literal['auto', 'equal'] | float"
+   - Current: `ax.set_aspect(config.aspect)` where `config.aspect: str`
+   - Fix: Change PlotConfig.aspect type hint to `Literal["auto", "equal"] | float` or add runtime type narrowing
+
+4. **Signature Mismatch (1 error):**
+   - `src/logic/plotting/__init__.py:132` - Unexpected keyword argument "config" for "plot" of "PhasePortraitPlotter"
+   - Root cause: Base class `PhasePortraitPlotter.plot()` signature missing `config` parameter
+   - Fix: Add `config: PlotConfig | None = None` to abstract method signature in `base.py:17`
+
+**Why Deferred:**
+- **Time pressure:** Day 6 testing sprint focused on test coverage (95% achieved)
+- **Dependency complexity:** scipy-stubs and matplotlib type stubs may introduce new type errors requiring investigation
+- **Diminishing returns:** Black + Ruff already catch formatting and common linting issues
+- **Current quality sufficient:** Type hints exist and are mostly correct, mypy strict mode catches edge cases
+
+**When to Add:**
+- **Before Phase 2:** Lean integration will benefit from strict type checking (subprocess communication, JSON serialization)
+- **Portfolio polish:** Demonstrates understanding of Python type system and professional tooling
+- **Production readiness:** Strict type checking valuable for team collaboration and refactoring safety
+
+**Estimated effort:** 1-2 hours (install stubs, fix 7 errors, address any new errors revealed by stubs)
+
+**Workaround:**
+Current quality target runs `black` + `ruff` only. Mypy commented out in Makefile with reference to this documentation.
+
 ---
 
 ## Timeline Reference

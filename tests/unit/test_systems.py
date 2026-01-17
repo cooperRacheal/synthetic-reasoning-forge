@@ -1,12 +1,10 @@
 """Unit tests for ODE system implementations."""
 
-import pytest
 import numpy as np
 from numpy.testing import assert_allclose
 
 from src.logic.systems.lorenz import LorenzSystem
 from src.logic.systems.pendulum import DampedPendulum
-from src.logic.systems.blow_up_system import BlowUpSystem
 
 
 class TestLorenzSystem:
@@ -23,7 +21,7 @@ class TestLorenzSystem:
         sys = LorenzSystem()
         assert sys.sigma == 10.0
         assert sys.rho == 28.0
-        assert_allclose(sys.beta, 8/3)
+        assert_allclose(sys.beta, 8 / 3)
 
     def test_custom_parameters(self):
         """System accepts custom parameter values."""
@@ -31,6 +29,7 @@ class TestLorenzSystem:
         assert sys.sigma == 5.0
         assert sys.rho == 15.0
         assert sys.beta == 2.0
+
 
 class TestDampedPendulum:
     """Test Damped Pendulum system implementation."""
@@ -56,4 +55,3 @@ class TestDampedPendulum:
         assert sys.damping == 0.5
         assert sys.mass == 2.0
         assert sys.gravity == 1.62
-

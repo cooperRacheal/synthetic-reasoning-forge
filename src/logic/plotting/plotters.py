@@ -1,12 +1,12 @@
 """Concrete plotter implementations for different dimensionalities."""
 
-from typing import Optional
 import matplotlib.pyplot as plt
 import numpy as np
 from numpy.typing import NDArray
 
 from src.logic.plotting.base import PhasePortraitPlotter
 from src.logic.plotting.config import PlotConfig
+
 
 class TwoDimensionalPlotter(PhasePortraitPlotter):
     """Plotter for 2D phase portraits (e.g., damped pendulum).
@@ -19,11 +19,11 @@ class TwoDimensionalPlotter(PhasePortraitPlotter):
         self,
         t: NDArray[np.float64],
         y: NDArray[np.float64],
-        labels: Optional[list[str]] = None,
-        title: Optional[str] = None,
-        save_path: Optional[str] = None,
-        config: Optional[PlotConfig] = None,
-    ) -> plt.Figure: 
+        labels: list[str] | None = None,
+        title: str | None = None,
+        save_path: str | None = None,
+        config: PlotConfig | None = None,
+    ) -> plt.Figure:
         """Plot 2D phase portrait.
 
         Parameters
@@ -52,10 +52,10 @@ class TwoDimensionalPlotter(PhasePortraitPlotter):
         >>> fig = plotter.plot(t, y, labels=['theta', 'omega'], title='Pendulum')
         """
 
-        if config is None: 
+        if config is None:
             config = PlotConfig()
 
-        if labels is None: 
+        if labels is None:
             labels = ["State 0", "State 1"]
 
         # Apply matplotlib style
@@ -64,15 +64,22 @@ class TwoDimensionalPlotter(PhasePortraitPlotter):
 
             # Plot trajectory in phase space
             color = None if config.color == "auto" else config.color
-            ax.plot(y[0, :], y[1, :], linewidth=config.line_width, 
-                color=color, alpha=config.alpha)
+            ax.plot(
+                y[0, :],
+                y[1, :],
+                linewidth=config.line_width,
+                color=color,
+                alpha=config.alpha,
+            )
 
             # Mark start and end points for trajectory direction
-            if config.show_markers: 
-                ax.plot(y[0, 0], y[1, 0], 'go', 
-                    markersize=config.marker_size, label='Start')
-                ax.plot(y[0, -1], y[1, -1], 'ro',
-                    markersize=config.marker_size, label='End')
+            if config.show_markers:
+                ax.plot(
+                    y[0, 0], y[1, 0], "go", markersize=config.marker_size, label="Start"
+                )
+                ax.plot(
+                    y[0, -1], y[1, -1], "ro", markersize=config.marker_size, label="End"
+                )
 
             ax.set_xlabel(labels[0], fontsize=12)
             ax.set_ylabel(labels[1], fontsize=12)
@@ -91,10 +98,11 @@ class TwoDimensionalPlotter(PhasePortraitPlotter):
             plt.tight_layout()
 
             # Save if path provided
-            if save_path: 
+            if save_path:
                 fig.savefig(save_path, dpi=config.dpi, format=config.save_format)
 
         return fig
+
 
 class ThreeDimensionalPlotter(PhasePortraitPlotter):
     """Plotter for 3D phase portraits (e.g. lorenz).
@@ -107,13 +115,13 @@ class ThreeDimensionalPlotter(PhasePortraitPlotter):
         self,
         t: NDArray[np.float64],
         y: NDArray[np.float64],
-        labels: Optional[list[str]] = None,
-        title: Optional[str] = None,
-        save_path: Optional[str] = None,
-        config: Optional[PlotConfig] = None,
+        labels: list[str] | None = None,
+        title: str | None = None,
+        save_path: str | None = None,
+        config: PlotConfig | None = None,
     ) -> plt.Figure:
         """Plot 3D phase portrait.
-        
+
         Parameters
         ----------
         t : NDArray[np.float64]
@@ -128,40 +136,58 @@ class ThreeDimensionalPlotter(PhasePortraitPlotter):
             Path to save figure, if provided
         config : Optional[PlotConfig]
             Plot configuration, if provided
-        
+
         Returns
         -------
         plt.Figure
             Matplotlib figure
-        
+
         Examples
         --------
         >>> plotter = ThreeDimensionalPlotter()
         >>> fig = plotter.plot(t, y, labels=['x', 'y', 'z'], title = 'Lorenz')
         """
-        
+
         if config is None:
             config = PlotConfig()
-            
-        if labels is None: 
+
+        if labels is None:
             labels = ["State 0", "State 1", "State 2"]
-            
+
         # Apply matplotlib style
         with plt.style.context(config.style):
             fig = plt.figure(figsize=config.figsize, dpi=config.dpi)
-            ax = fig.add_subplot(111, projection='3d')
-            
+            ax = fig.add_subplot(111, projection="3d")
+
             # Plot trajectory in phase space
             color = None if config.color == "auto" else config.color
-            ax.plot(y[0,:], y[1, :], y[2, :], linewidth=config.line_width,
-                color=color, alpha=config.alpha)
+            ax.plot(
+                y[0, :],
+                y[1, :],
+                y[2, :],
+                linewidth=config.line_width,
+                color=color,
+                alpha=config.alpha,
+            )
 
             # Mark start and end points for trajectory direction
             if config.show_markers:
-                ax.plot([y[0, 0]], [y[1, 0]], [y[2, 0]], 'go',
-                    markersize=config.marker_size, label='Start')
-                ax.plot([y[0, -1]], [y[1, -1]], [y[2, -1]], 'ro',
-                    markersize=config.marker_size, label='End')
+                ax.plot(
+                    [y[0, 0]],
+                    [y[1, 0]],
+                    [y[2, 0]],
+                    "go",
+                    markersize=config.marker_size,
+                    label="Start",
+                )
+                ax.plot(
+                    [y[0, -1]],
+                    [y[1, -1]],
+                    [y[2, -1]],
+                    "ro",
+                    markersize=config.marker_size,
+                    label="End",
+                )
 
             ax.set_xlabel(labels[0], fontsize=12)
             ax.set_ylabel(labels[1], fontsize=12)
@@ -172,7 +198,7 @@ class ThreeDimensionalPlotter(PhasePortraitPlotter):
             # Grid and legend
             if config.show_grid:
                 ax.grid(True, alpha=0.3)
-            if config.show_markers: 
+            if config.show_markers:
                 ax.legend()
 
             plt.tight_layout()
@@ -182,5 +208,3 @@ class ThreeDimensionalPlotter(PhasePortraitPlotter):
                 fig.savefig(save_path, dpi=config.dpi, format=config.save_format)
 
             return fig
-
-            

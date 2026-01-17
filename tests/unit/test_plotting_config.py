@@ -1,7 +1,7 @@
 """Unit test for PlotConfig dataclass."""
 
-import pytest
 from src.logic.plotting.config import PlotConfig
+
 
 class TestPlotConfig:
     """Test PlotConfig dataclass defaults and customization."""
@@ -17,12 +17,12 @@ class TestPlotConfig:
         assert config.dpi == 100
         assert config.style == "seaborn-v0_8-darkgrid"
         assert config.save_format == "png"
-        assert config.show_grid == False
+        assert not config.show_grid
         assert config.line_width == 1.5
         assert config.color == "auto"
         assert config.alpha == 1.0
         assert config.marker_size == 8.0
-        assert config.show_markers == True
+        assert config.show_markers
         assert config.aspect == "auto"
 
     def test_custom_values(self):
@@ -39,7 +39,7 @@ class TestPlotConfig:
             alpha=2.0,
             marker_size=7.0,
             show_markers=False,
-            aspect="equal"
+            aspect="equal",
         )
 
         # Assert each attribute equals custom assignment
@@ -47,11 +47,10 @@ class TestPlotConfig:
         assert config.dpi == 200
         assert config.style == "default"
         assert config.save_format == "jpg"
-        assert config.show_grid == False
+        assert not config.show_grid
         assert config.line_width == 2.0
         assert config.color == "red"
         assert config.alpha == 2.0
         assert config.marker_size == 7.0
-        assert config.show_markers == False
-        assert config.aspect == "equal"        
-        
+        assert not config.show_markers
+        assert config.aspect == "equal"

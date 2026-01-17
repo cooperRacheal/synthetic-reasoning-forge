@@ -1,12 +1,14 @@
 """Unit tests for custom exception hierarchy."""
 
 import pytest
+
 from src.logic.exceptions import (
     ForgeError,
-    SolverConvergenceError,
     LeanTimeoutError,
     LeanVerificationError,
+    SolverConvergenceError,
 )
+
 
 class TestExceptionHierarchy:
     """Test exception inheritance and basic functionality."""
@@ -14,7 +16,7 @@ class TestExceptionHierarchy:
     def test_forge_error_is_exception(self):
         """ForgeError inherits from base Exception."""
         assert issubclass(ForgeError, Exception)
-        
+
     def test_all_exceptions_inherit_from_forge_error(self):
         """All custom exceptions inherit from ForgeError base class."""
 

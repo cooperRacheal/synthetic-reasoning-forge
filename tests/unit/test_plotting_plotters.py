@@ -1,10 +1,9 @@
 """Unit tests for concrete plotter implementations."""
 
-import pytest
 import matplotlib.pyplot as plt
-import numpy as np
 
-from src.logic.plotting.plotters import TwoDimensionalPlotter, ThreeDimensionalPlotter
+from src.logic.plotting.plotters import ThreeDimensionalPlotter, TwoDimensionalPlotter
+
 
 class TestTwoDimensionalPlotter:
     """Test 2D phase portrait plotter."""
@@ -18,7 +17,7 @@ class TestTwoDimensionalPlotter:
 
         assert isinstance(fig, plt.Figure)
         plt.close(fig)
-        
+
     def test_saves_file(self, synthetic_2d_trajectory, tmp_path):
         """2D plotter saves figure to file when save_path provided."""
 
@@ -27,9 +26,10 @@ class TestTwoDimensionalPlotter:
 
         plotter = TwoDimensionalPlotter()
         fig = plotter.plot(t, y, save_path=str(save_path))
-        
+
         assert save_path.exists()
         plt.close(fig)
+
 
 class TestThreeDimensionalPlotter:
     """Test 3D phase portrait plotter."""
@@ -55,6 +55,3 @@ class TestThreeDimensionalPlotter:
 
         assert save_path.exists()
         plt.close(fig)
-
-
-

@@ -1,7 +1,9 @@
 """Unit tests for logger configuration."""
 
 import logging
+
 from src.logic.logger import get_logger
+
 
 class TestLogger:
     """Test logger configuration and behavior."""
@@ -23,5 +25,3 @@ class TestLogger:
         logger2 = get_logger("Test")
         handler_count2 = len(logger2.handlers)
         assert handler_count1 == handler_count2
-        
-        

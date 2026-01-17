@@ -14,11 +14,11 @@ from src.logic.protocols import ODESystem
 
 
 def solve_ode(
-    system: ODESystem, 
-    t_span: tuple[float, float], 
+    system: ODESystem,
+    t_span: tuple[float, float],
     y0: NDArray[np.float64],
     method: str = "RK45",
-    auto_fallback: bool = True
+    auto_fallback: bool = True,
 ) -> OdeSolution:
     """Solve an ODE system over a time interval.
 
@@ -34,7 +34,7 @@ def solve_ode(
     y0 : NDArray[np.float64]
         Initial state vector at t0.
     method : str, default "RK45"
-        Integration algorithm for solve_ivp. 
+        Integration algorithm for solve_ivp.
         Options:    'RK45' (explicit Runge-Kutta, non-stiff)
                     'LSODA' (adaptive stiffness detection),
                     'Radau' / 'BDF' (implicit, stiff systems)
@@ -63,11 +63,13 @@ def solve_ode(
         ivp_solution = solve_ivp(system.f, t_span, y0, method="LSODA")
 
         if not ivp_solution.success:
-            raise SolverConvergenceError(f"Both {method} and LSODA failed: {ivp_solution.message}")
+            raise SolverConvergenceError(
+                f"Both {method} and LSODA failed: {ivp_solution.message}"
+            )
 
         logger.info("Success with LSODA fallback")
 
-    elif not ivp_solution.success:  
+    elif not ivp_solution.success:
         raise SolverConvergenceError(f"{method} failed: {ivp_solution.message}")
 
     else:

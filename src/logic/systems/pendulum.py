@@ -36,7 +36,11 @@ class DampedPendulum:
     """
 
     def __init__(
-        self, length: float = 1.0, damping: float = 0.2, mass: float = 1.0, gravity: float = 9.81
+        self,
+        length: float = 1.0,
+        damping: float = 0.2,
+        mass: float = 1.0,
+        gravity: float = 9.81,
     ) -> None:
         self.length = length
         self.damping = damping

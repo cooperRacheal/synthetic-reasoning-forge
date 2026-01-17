@@ -2,9 +2,10 @@
 
 import pytest
 
-from src.logic.plotting.factory import PlotterNotFoundError, PlotterFactory
 from src.logic.plotting.base import PhasePortraitPlotter
+from src.logic.plotting.factory import PlotterFactory, PlotterNotFoundError
 from src.logic.plotting.plotters import ThreeDimensionalPlotter, TwoDimensionalPlotter
+
 
 class TestPlotterFactory:
     """Test PlotterFactory registry and creation."""
@@ -44,7 +45,7 @@ class TestPlotterFactory:
         plotter = PlotterFactory.create(4)
         assert isinstance(plotter, TestPlotter)
         assert isinstance(plotter, PhasePortraitPlotter)
-        
+
         # Cleanup
         del PlotterFactory._registry[4]
 
@@ -67,7 +68,3 @@ class TestPlotterFactory:
 
         # Restore original 2D registry object
         PlotterFactory._registry[2] = original
-
-
-
-

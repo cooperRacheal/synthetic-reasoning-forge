@@ -54,23 +54,22 @@ Register custom plotter:
 ...     #If a 4D plotter
 """
 
-from typing import Optional
+import matplotlib.pyplot as plt
 import numpy as np
 from numpy.typing import NDArray
-import matplotlib.pyplot as plt
 
 from src.logic.plotting.base import PhasePortraitPlotter
 from src.logic.plotting.config import PlotConfig
 from src.logic.plotting.factory import PlotterFactory, PlotterNotFoundError
-from src.logic.plotting.plotters import TwoDimensionalPlotter, ThreeDimensionalPlotter
+
 
 def plot_phase_portrait(
     t: NDArray[np.float64],
     y: NDArray[np.float64],
-    labels: Optional[list[str]] = None,
-    title: Optional[str] = None,
-    config: Optional[PlotConfig] = None,
-    save_path: Optional[str] = None,
+    labels: list[str] | None = None,
+    title: str | None = None,
+    config: PlotConfig | None = None,
+    save_path: str | None = None,
 ) -> plt.Figure:
     """Plot phase portrait for ODE solution.
 
@@ -91,7 +90,7 @@ def plot_phase_portrait(
         Axis labels for each state dimension, if provided
     title : Optional[str]
         Plot title, if provided
-    config : Optional[PlotConfig]   
+    config : Optional[PlotConfig]
         Plot configuration (figsize, dpi, style, etc.)
     save_path : Optional[str]
         If provided, save figure to this path
@@ -134,6 +133,7 @@ def plot_phase_portrait(
         t, y, labels=labels, title=title, save_path=save_path, config=config
     )
 
+
 # Public API exports
 __all__ = [
     "plot_phase_portrait",
@@ -142,8 +142,3 @@ __all__ = [
     "PhasePortraitPlotter",
     "PlotterNotFoundError",
 ]
-    
-
-
-
-

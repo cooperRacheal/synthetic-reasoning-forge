@@ -1,13 +1,15 @@
 """Factory for creating plotters based on dimensionality."""
-from typing import Type
 
-from src.logic.plotting.base import PhasePortraitPlotter
-from src.logic.plotting.plotters import TwoDimensionalPlotter, ThreeDimensionalPlotter
 from src.logic.exceptions import ForgeError
+from src.logic.plotting.base import PhasePortraitPlotter
+from src.logic.plotting.plotters import ThreeDimensionalPlotter, TwoDimensionalPlotter
+
 
 class PlotterNotFoundError(ForgeError):
     """Raised when no plotter exists for input dimensionality."""
+
     pass
+
 
 class PlotterFactory:
     """Factory for creating phase portrait plotters.
@@ -29,48 +31,48 @@ class PlotterFactory:
     >>> PlotterFactory.register("bifurcation", BifurcationPlotter)
     """
 
-    _registry: dict[int, Type[PhasePortraitPlotter]] = {
+    _registry: dict[int, type[PhasePortraitPlotter]] = {
         2: TwoDimensionalPlotter,
         3: ThreeDimensionalPlotter,
     }
 
     @classmethod
     def create(cls, n_dim: int) -> PhasePortraitPlotter:
-            """Create plotter for given dimensionality.
+        """Create plotter for given dimensionality.
 
-            Parameters
-            ---------
-            n_dim : int
-                State space dimensionality
+        Parameters
+        ---------
+        n_dim : int
+            State space dimensionality
 
-            Returns
-            -------
-            PhasePortraitPlotter
-                Concrete plotter instance
+        Returns
+        -------
+        PhasePortraitPlotter
+            Concrete plotter instance
 
-            Raises
-            ------
-            PlotterNotFoundError
-                If no plotter registered for dimensionality
+        Raises
+        ------
+        PlotterNotFoundError
+            If no plotter registered for dimensionality
 
-            Examples
-            --------
-            >>> plotter = PlotterFactory.create(2)
-            >>> isinstance(plotter, TwoDimensionalPlotter)
-            True
-            """
+        Examples
+        --------
+        >>> plotter = PlotterFactory.create(2)
+        >>> isinstance(plotter, TwoDimensionalPlotter)
+        True
+        """
 
-            if n_dim not in cls._registry:
-                raise PlotterNotFoundError(
-                    f"No plotter registered for {n_dim}D systems. "
-                    f"Available dimensions: {list(cls._registry.keys())}"
-                )
+        if n_dim not in cls._registry:
+            raise PlotterNotFoundError(
+                f"No plotter registered for {n_dim}D systems. "
+                f"Available dimensions: {list(cls._registry.keys())}"
+            )
 
-            plotter_class = cls._registry[n_dim]
-            return plotter_class()
-    
+        plotter_class = cls._registry[n_dim]
+        return plotter_class()
+
     @classmethod
-    def register(cls, n_dim: int, plotter_class: Type[PhasePortraitPlotter]) -> None:
+    def register(cls, n_dim: int, plotter_class: type[PhasePortraitPlotter]) -> None:
         """Register new plotter for dimensionality.
 
         Enable extending the factory without modifying this file.
@@ -89,4 +91,3 @@ class PlotterFactory:
         >>> PlotterFactory.register(4, CustomPlotter)
         """
         cls._registry[n_dim] = plotter_class
-        

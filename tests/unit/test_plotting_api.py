@@ -1,10 +1,11 @@
 """Unit tests for plot_phase_portrait API function."""
 
-import pytest
 import matplotlib.pyplot as plt
 import numpy as np
+import pytest
 
-from src.logic.plotting import plot_phase_portrait, PlotterNotFoundError
+from src.logic.plotting import PlotterNotFoundError, plot_phase_portrait
+
 
 class TestPlotPhasePortrait:
     """Test public API function for phase portrait plotting."""
@@ -12,7 +13,7 @@ class TestPlotPhasePortrait:
     def test_2d_dispatch(self, synthetic_2d_trajectory):
         """plot_phase_portrait handles 2D data."""
         t, y = synthetic_2d_trajectory
-        
+
         fig = plot_phase_portrait(t, y)
 
         assert isinstance(fig, plt.Figure)
@@ -33,6 +34,4 @@ class TestPlotPhasePortrait:
         y = np.random.rand(4, 100)
 
         with pytest.raises(PlotterNotFoundError):
-            plot_phase_portrait(t,y)
-
-
+            plot_phase_portrait(t, y)
