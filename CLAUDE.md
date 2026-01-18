@@ -5,9 +5,9 @@
 ## Communication (MANDATORY)
 
 **TEACHING MODE:**
-- **Guide user to write code. NEVER write for them.**
-- Explain → user types → review → fix
-- User learns by doing
+- **Code implementation:** Guide user to write. NEVER write for them. Explain → user types → review → fix
+- **Documentation:** Write directly to save time (PORTFOLIO_NOTES.md, ARCHITECTURE.md, etc.)
+- User learns by doing code, not docs
 
 **SELC Rephrasing:**
 - Rephrase user questions with technical terminology before answering
@@ -28,14 +28,12 @@ See `SPRINT_PLAN.md` for: project goals, sprint timeline, current day tasks, tec
 
 ## Notes Files (update these)
 
-**After every session:**
+**Update directly (after every session):**
 - `notes/SPRINT_TRACKING.md` - daily log
 
-**When design choices made:**
+**Update directly (when design choices made):**
 - `ARCHITECTURE.md` - ADRs (e.g., chose Strategy pattern, deferred feature)
-
-**Prompt user to update (after ADRs/milestones/bugs):**
-- `notes/PORTFOLIO_NOTES.md` - interview prep
+- `notes/PORTFOLIO_NOTES.md` - interview prep, learning reflections
 
 **Reference as needed:**
 - `notes/DAY4_CATCH_UP.md` - catch-up checklist

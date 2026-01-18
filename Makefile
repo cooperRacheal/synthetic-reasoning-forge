@@ -1,4 +1,4 @@
-.PHONY: test test-solver test-systems test-plotting test-all coverage clean quality format
+.PHONY: test test-solver test-systems test-plotting test-lean-bridge test-all coverage clean quality format
 
 # Individual test modules
 test-solver:
@@ -9,6 +9,9 @@ test-systems:
 
 test-plotting:
 	pytest tests/unit/test_plotting_*.py -v
+
+test-lean-bridge:
+	pytest tests/unit/test_lean_bridge_symbolic.py -v
 
 # Run all unit tests
 test-all:
@@ -38,3 +41,4 @@ clean:
 
 # Default target
 test: test-all
+

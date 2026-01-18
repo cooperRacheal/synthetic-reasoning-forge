@@ -651,6 +651,46 @@ At the end of each day, update the SPRINT_TRACKING.md file with:
 
 ## Deferred Features
 
+### Automatic State Variable Name Inference (Phase 2 Future Enhancement)
+**Status:** Deferred to Phase 2B or later
+**Reason:** Explicit names provide better semantic clarity for symbolic math
+
+**Current approach:** Each system declares `_state_var_names = ['x', 'y', 'z']` explicitly
+**Proposed enhancement:** Hybrid fallback - use explicit if provided, otherwise generate generic names ['x0', 'x1', 'x2'] from state_dim
+
+**Trade-offs:**
+- Explicit (current): Better readability, matches literature conventions, clear semantics
+- Automatic (future): Less boilerplate, but loses semantic meaning (theta → x0, omega → x1)
+
+**Implementation sketch:**
+```python
+def get_state_variables(self):
+    if hasattr(self, '_state_var_names'):
+        return self._state_var_names  # Explicit names
+    return [f'x{i}' for i in range(self.state_dim)]  # Fallback generic
+```
+
+**Decision:** Keep explicit for Phase 2A (symbolic readability matters for Lean formalization). Revisit if boilerplate becomes burden.
+
+---
+
+### Exact Rational Parameters for Lean Serialization (Phase 2B Required)
+**Status:** Deferred to Phase 2B (Serialization phase)
+**Reason:** Sympy `.equals()` currently handles float ≈ rational comparison, but Lean requires exact rationals
+
+**Current behavior:** Parameters like `beta=8/3` become floats (`2.66666666666667`) in symbolic expressions
+**Phase 2A impact:** Tests pass because sympy's `.equals()` recognizes symbolic equivalence
+**Phase 2B requirement:** Lean expects exact rationals (`8/3`), not float approximations
+
+**Implementation options:**
+1. Convert params to `sp.Rational` in `_build_symbolic_equations()` (minimal change)
+2. Store params as `sp.Rational` in ODE system `__init__` (requires changing all systems)
+3. Handle conversion during JSON serialization (encapsulated in Phase 2B)
+
+**Decision:** Defer to Phase 2B serializer. Monitor if other systems have similar float parameters. Choose option during Phase 2B based on scope.
+
+---
+
 ### Solver Plotting Integration (Optional Convenience)
 **Status:** Deferred to future sprint
 **Reason:** Non-critical convenience feature, behind schedule on Phase 1 core

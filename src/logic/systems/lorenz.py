@@ -1,10 +1,13 @@
 """Implementation of the Lorenz system of Ordinary Differential Equations"""
 
 import numpy as np
+import sympy as sp
 from numpy.typing import NDArray
 
+from src.logic.lean_bridge.symbolic import SymbolicMixin
 
-class LorenzSystem:
+
+class LorenzSystem(SymbolicMixin):
     r"""
     The Lorenz system is a system of three ordinary differential equations
     first studied by Edward Lorenz. It is notable for having chaotic solutions
@@ -28,6 +31,8 @@ class LorenzSystem:
         A geometric factor (dimensionless) related to the physical dimensions of
         the layer. Defaults to 8/3 ≈ 2.667 (standard chaotic regime).
     """
+
+    _state_var_names = ["x", "y", "z"]
 
     def __init__(
         self, sigma: float = 10.0, rho: float = 28.0, beta: float = 8 / 3
@@ -63,3 +68,33 @@ class LorenzSystem:
         dz_dt = x_val * y_val - self.beta * z_val
 
         return np.array([dx_dt, dy_dt, dz_dt])
+
+    def _build_symbolic_equations(self) -> dict[str, sp.Expr]:
+        """
+        Build symbolic equations for Lorenz system.
+
+        Returns
+        -------
+        dict[str, sp.Expr]
+            Symbolic derivatives:
+            - dx/dt = sigma * (y - x)
+            - dy/dt = x * (rho - z) - y
+            - dz/dt = x * y - beta * z
+
+        Examples
+        --------
+        >>> lorenz = LorenzSystem(sigma=10, rho=28, beta=8/3)
+        >>> eqs = lorenz._build_symbolic_equations()
+        >>> eqs['x']
+        10*(y-x)
+        """
+
+        # Create symbolic variables
+        x, y, z = sp.symbols("x y z")
+
+        # Build symbolic expressions matching f() equations
+        return {
+            "x": self.sigma * (y - x),
+            "y": x * (self.rho - z) - y,
+            "z": x * y - self.beta * z,
+        }

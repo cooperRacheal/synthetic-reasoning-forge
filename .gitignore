@@ -4,6 +4,8 @@ __pycache__/
 *.py[cod]
 .env
 
+test_explore.py
+
 # Lean 4 (Nested paths)
 lean/.lake/
 lean/lake-packages/
