@@ -10,6 +10,7 @@ test_explore.py
 lean/.lake/
 lean/lake-packages/
 lean/build/
+lean/lean_learning
 
 # System
 .DS_Store
