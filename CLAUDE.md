@@ -22,7 +22,7 @@
 
 See `SPRINT_PLAN.md` for: project goals, sprint timeline, current day tasks, tech stack
 
-**Current:** Day 6 - solver + viz + validation complete
+**Current:** Day 10 - Phase 1 merged, Phase 2A complete, Phase 3A complete
 
 ---
 

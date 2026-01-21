@@ -1253,7 +1253,7 @@ theorem decay_picard_specific :
 - Compute `a, r, L` from interval size and IC
 - This enables JSON bridge (Python provides t0, x0, interval)
 
-**Status:** Phase 3A complete (Day 9 - Jan 20, 2026) - ready for parametric generalization
+**Status:** Phase 3A complete (Day 9 - Jan 20, 2026) - Ready for parametric generalization
 
 ---
 

@@ -99,13 +99,16 @@ reasoning_forge/
 │       ├── test_exceptions.py     # Exception hierarchy (3 tests)
 │       ├── test_logger.py         # Logger configuration (3 tests)
 │       └── test_lean_bridge_symbolic.py # SymbolicMixin (10 tests)
-└── lean/                    # Lean 4 formal verification (Phase 3A active)
-    └── lean_learning/LeanBasics/ # Learning exercises + first proofs
-        ├── Arithmetic.lean        # Session 1A: First proofs
-        ├── ODETypes.lean          # Session 1B: Structures
-        ├── Tactics.lean           # Session 2A: Core tactics
-        ├── AnalysisTactics.lean   # Session 2B: Analysis tactics
-        └── PicardExample.lean     # Phase 3A: decay_picard_specific ✅
+└── lean/                    # Lean 4 formal verification (2 separate Lake projects)
+    ├── ForgeLogic/          # Production project (future Python-Lean bridge target)
+    │   └── Basic.lean       # Core definitions (placeholder)
+    └── lean_learning/       # Learning project (separate Lake config)
+        └── LeanBasics/      # Learning exercises + first proofs
+            ├── Arithmetic.lean        # Session 1A: First proofs
+            ├── ODETypes.lean          # Session 1B: Structures
+            ├── Tactics.lean           # Session 2A: Core tactics
+            ├── AnalysisTactics.lean   # Session 2B: Analysis tactics
+            └── PicardExample.lean     # Phase 3A: decay_picard_specific ✅
 ```
 
 ## Documentation Structure
@@ -147,7 +150,7 @@ reasoning_forge/
 
 ## Current Status (Day 10 - January 21, 2026)
 
-**Timeline:** Started Monday Jan 12 (Day 1), currently Day 10 (Wed Jan 21)
+**Timeline:** Started Monday Jan 12 (Day 1), currently Day 10 (Wed Jan 21) - *calendar days, includes weekends*
 **Sprint Status:** Extended beyond original 7-day plan
 
 ### Phase 1: Numerical Foundation ✅ COMPLETE (Days 1-6)
