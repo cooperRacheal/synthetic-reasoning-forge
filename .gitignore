@@ -15,6 +15,7 @@ lean/build/
 lean/lean_learning/*
 !lean/lean_learning/lean-toolchain
 !lean/lean_learning/lakefile.toml
+!lean/lean_learning/lake-manifest.json
 !lean/lean_learning/LeanBasics.lean
 !lean/lean_learning/LeanBasics/
 lean/lean_learning/LeanBasics/*
