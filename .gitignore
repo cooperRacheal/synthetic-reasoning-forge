@@ -3,6 +3,9 @@
 __pycache__/
 *.py[cod]
 .env
+.coverage
+htmlcov/
+.pytest_cache/
 
 test_explore.py
 
