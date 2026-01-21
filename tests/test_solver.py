@@ -1,4 +1,16 @@
-"""Quick test script for ODE solver."""
+"""Quick manual test script for ODE solver.
+
+This is a simple smoke test script for rapid development iteration.
+For comprehensive unit tests, see tests/unit/test_solver.py.
+
+Usage:
+    python tests/test_solver.py
+
+Expected Output:
+    - Lorenz system solves successfully
+    - Pendulum system solves successfully
+    - BlowUpSystem correctly raises SolverConvergenceError
+"""
 
 import numpy as np
 

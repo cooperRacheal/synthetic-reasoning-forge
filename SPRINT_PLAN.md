@@ -329,7 +329,7 @@ Implement glucose and insulin minimal models (Phase 1.5)
   - Test f() returns correct shape
   - Test parameter bounds (SI, SG in normal ranges)
 - [ ] Basic parameter estimation script (~1.5 hours)
-  - Create `scripts/fit_glucose_model.py`
+  - Create parameter estimation script
   - Use `scipy.optimize.least_squares`
   - Fit k1, k2, k3, G0 to Van Riel data
   - Print estimated SI and SG
