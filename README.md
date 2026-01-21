@@ -23,7 +23,7 @@ Python ODE solver with extensible visualization architecture for dynamical syste
 - Generic ODE solver (scipy integration with method selection + auto-fallback)
 - Strategy + Factory pattern visualization (2D/3D phase portraits)
 - Test systems: Lorenz attractor, damped pendulum, pathological cases
-- Comprehensive testing: 33 unit tests, 95% code coverage
+- Comprehensive testing: 44 unit tests, 95% code coverage
 
 ### Phase 2: Python-Lean Bridge (🔨 IN PROGRESS)
 Symbolic equation extraction and JSON serialization for formal verification pipeline.
@@ -49,7 +49,7 @@ Manual proof development in Lean 4 for ODE system properties and structural isom
 | **Numerical Computing** | NumPy ≥1.24, SciPy ≥1.11 | ✅ Phase 1 |
 | **Symbolic Math** | SymPy ≥1.12 | ✅ Phase 2A |
 | **Visualization** | Matplotlib ≥3.8 | ✅ Phase 1 |
-| **Testing** | pytest ≥8.0, pytest-cov | ✅ 95% coverage (43 tests) |
+| **Testing** | pytest ≥8.0, pytest-cov | ✅ 95% coverage (44 tests) |
 | **Quality Tools** | Black, Ruff, Mypy | ✅ Black + Ruff passing |
 | **Integration Layer** | LeanDojo / lean-client-python | 📋 Planned (Phase 3C) |
 | **Build System** | pyproject.toml / hatchling | ✅ Active |
@@ -89,7 +89,7 @@ reasoning_forge/
 │       └── proof_request.py       # LeanProofRequest API - planned
 ├── tests/                   # Comprehensive test suite
 │   ├── conftest.py             # Pytest fixtures (systems, ICs, config)
-│   └── unit/                   # 43 unit tests, 95% coverage
+│   └── unit/                   # 44 unit tests, 95% coverage
 │       ├── test_solver.py         # Convergence, methods, auto-fallback (8 tests)
 │       ├── test_systems.py        # System implementations (6 tests)
 │       ├── test_plotting_factory.py # PlotterFactory registry (4 tests)
@@ -120,7 +120,7 @@ reasoning_forge/
 
 **Code & Proofs:**
 - `src/logic/` - Python ODE solver + visualization infrastructure
-- `tests/` - 43 unit tests (95% coverage)
+- `tests/` - 44 unit tests (95% coverage)
 - `examples/` - Validation scripts and generated plots
 - `lean/lean_learning/LeanBasics/PicardExample.lean` - First Picard-Lindelöf proof
 - `lean/lean_learning/lakefile.toml`, `lean-toolchain` - Lean build config
@@ -156,7 +156,7 @@ reasoning_forge/
 - [x] Generic ODE solver (method selection + auto-fallback for stiff systems)
 - [x] Strategy + Factory pattern visualization (2D/3D phase portraits)
 - [x] Test systems: Lorenz, Damped Pendulum, BlowUp
-- [x] Comprehensive testing: 33 unit tests, 95% code coverage
+- [x] Comprehensive testing: 44 unit tests, 95% code coverage
 - [x] Quality checks: Black + Ruff passing (Mypy deferred with documentation)
 - [x] Visual validation: 7 plots with biologically relevant parameters
 - [x] **Merged to main:** PR #1 (Day 6 - January 17, 2026)
@@ -171,7 +171,7 @@ reasoning_forge/
 - [x] Implement SymbolicMixin (symbolic.py) with lazy caching
 - [x] Extend LorenzSystem with symbolic support
 - [x] Write 10+ tests for symbolic functionality (10 tests added)
-- [x] Verify backward compatibility (all 43 tests pass)
+- [x] Verify backward compatibility (all 44 tests pass)
 - [x] Branch: feat/phase2-lean-bridge (not yet merged)
 
 **Phase 2B: JSON Serialization (Not Started)**
