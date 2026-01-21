@@ -103,7 +103,7 @@ reasoning_forge/
     └── lean_learning/LeanBasics/ # Learning exercises + first proofs
         ├── Arithmetic.lean        # Session 1A: First proofs
         ├── ODETypes.lean          # Session 1B: Structures
-        ├── CoreTactics.lean       # Session 2A: Core tactics
+        ├── Tactics.lean           # Session 2A: Core tactics
         ├── AnalysisTactics.lean   # Session 2B: Analysis tactics
         └── PicardExample.lean     # Phase 3A: decay_picard_specific ✅
 ```

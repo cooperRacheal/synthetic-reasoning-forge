@@ -385,7 +385,7 @@ Begin Lean 4 learning path focused on ODE formalization and Picard-Lindelöf pro
 **Session 2A: Core Tactics (1 hour) ✅**
 - Mastered 6 core tactics: `rfl`, `intro`, `exact`, `apply`, `rw`, `simp`
 - Practiced hypothesis rewriting and tactic chaining
-- File: `LeanBasics/CoreTactics.lean`
+- File: `LeanBasics/Tactics.lean`
 
 **Session 2B: Analysis Tactics (1.5 hours) ✅**
 - Learned `ring`, `norm_num`, `field_simp`, `fun_prop`, `have`
