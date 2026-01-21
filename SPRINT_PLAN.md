@@ -442,6 +442,19 @@ Finalize testing, create demo, polish documentation
 **Timeline Adjustment (Jan 17):**
 Day 8 now completes Phase 1 instead of Day 7. Comprehensive testing + demo + docs require full Day 7 + Day 8 morning/afternoon.
 
+**ACTUAL Day 8 (Jan 20):**
+- Phase 1 completed Days 1-6 (solver + viz + testing all done)
+- Phase 2A completed Day 6 (SymbolicMixin already implemented)
+- **Day 7:** Lean 4 learning (Sessions 1A, 1B, 2A, 2B complete)
+- **Day 8 (today):** Phase 3A - Specific decay proof COMPLETE ✅
+  - Completed `decay_picard_specific` theorem: all 4 Picard-Lindelöf cases proven
+  - Interval: `[-0.1, 0.1]`, IC: `x(0)=5`, Parameters: `a=1, r=0, L=6, K=1`
+  - Debugged parameter constraint issue (consistency condition)
+  - File: `lean/lean_learning/LeanBasics/PicardExample.lean` (95 lines)
+  - **Remaining work:** General `decay_picard` (parametric), other systems (Lorenz, etc.)
+- See `notes/SPRINT_TRACKING.md` Day 8 for full session
+- See `notes/PORTFOLIO_NOTES_PHASE3.md` for learnings
+
 
 ---
 

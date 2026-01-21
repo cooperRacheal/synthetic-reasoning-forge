@@ -720,6 +720,349 @@ assert 'x' in equations  # ✓ Returns dict of sympy expressions
 
 ---
 
+### ADR #15: JSON Bridge Architecture - Data Transport, Not Proof Generation
+
+**Decision:** JSON serves as a **data serialization format** for communicating ODE system specifications to Lean. It does NOT generate or write Lean proofs. Lean proofs are **written once as parametric templates** in Lean code, and JSON provides the data these templates operate on.
+
+**Critical Clarification:**
+
+This ADR addresses a common architectural misconception: "JSON will generate/write Lean proofs automatically."
+
+**Reality:** JSON is a **data pipe**, not a code generator.
+
+---
+
+#### What JSON DOES (Data Serialization)
+
+**Python → JSON:** Serialize ODE system metadata
+
+```python
+# Python side
+glucose_system = GlucoseMinimalModel(k1=0.026, k2=0.025, k3=0.025)
+
+json_payload = {
+    "system_type": "GlucoseMinimalModel",
+    "state_dim": 2,
+    "equations": ["dG/dt = k1*(Gb - G) - X*G", "dX/dt = k2*(I - Ib) - k3*X"],
+    "parameters": {"k1": 0.026, "k2": 0.025, "k3": 0.025},
+    "initial_condition": [92, 11],
+    "time_interval": [0, 180]
+}
+```
+
+**This is pure data** - no proof logic, no tactics, no theorems.
+
+---
+
+#### What Lean DOES (Apply Pre-Written Proofs)
+
+**Lean side:** Parse JSON and apply **manually-written** proof templates
+
+```lean
+-- YOU WRITE THIS PROOF ONCE (manually, in Lean)
+theorem glucose_satisfies_picard_lindelof
+  (sys : GlucoseSystem)              -- Parsed from JSON
+  (t₀ : ℝ) (x₀ : ℝ × ℝ)
+  (tmin tmax : ℝ)
+  (h_interval : tmin ≤ t₀ ∧ t₀ ≤ tmax)
+  : ∃ (a r L K : ℝ≥0), IsPicardLindelof sys.rhs ⟨t₀, h_interval⟩ x₀ a r L K := by
+  -- PROOF TACTICS (written once, work for any GlucoseSystem parameters)
+  use compute_domain_radius sys, 0, compute_lipschitz_bound sys, compute_norm_bound sys
+  constructor
+  case lipschitzOnWith =>
+    intro t ht
+    apply lipschitz_of_polynomial_rhs
+    -- Proof that polynomial RHS is Lipschitz
+  case continuousOn =>
+    intro x hx
+    apply continuous_polynomial
+    -- Proof that polynomial is continuous
+  case norm_le =>
+    intro t ht x hx
+    apply norm_bound_on_closed_ball
+    -- Proof that norm is bounded
+  case mul_max_le =>
+    simp [compute_consistency_inequality]
+    -- Proof of L * Δt ≤ a - r
+```
+
+**Key insight:** This proof is **parametric** - works for any `GlucoseSystem` with any parameter values. JSON just provides the specific `k1`, `k2`, `k3` values.
+
+---
+
+#### What CAN'T Be Automated (Proof Construction)
+
+**You CANNOT "generate Lean proofs from JSON"** because:
+
+1. **Proofs require mathematical reasoning**
+   - Each theorem type needs custom proof strategy
+   - Tactics depend on mathematical structure (polynomial, Lipschitz, continuous)
+   - No algorithm auto-discovers proof strategies
+
+2. **Lean is a proof assistant, not an automated theorem prover**
+   - You guide Lean through the proof steps
+   - Lean verifies each step is valid
+   - Lean doesn't "figure out" the proof for you
+
+3. **Different systems need different proof templates**
+   - Polynomial systems use `ring`, `continuity` tactics
+   - Systems with singularities need different approach
+   - Each system class needs human-written proof template
+
+---
+
+#### The Complete Workflow
+
+**Phase 1: Python Numerical Discovery**
+
+```python
+# "These two systems look similar numerically"
+similarity = compare_trajectories(glucose_system, pid_system)
+if similarity > threshold:
+    print("Candidate analogy detected!")
+```
+
+**Phase 2B: Python Serializes to JSON**
+
+```python
+# Send system data to Lean
+request = LeanProofRequest(
+    system=ODESystemMetadata.from_ode_system(glucose_system),
+    proof_type="picard_lindelof",
+    initial_condition=[92, 11],
+    time_interval=[0, 180]
+)
+
+json_data = request.to_lean_json()  # Pure data, no proofs
+```
+
+**Phase 3: Lean Parses JSON + Applies Proof Template**
+
+```lean
+-- Parse JSON into Lean structures
+def verify_from_json (json_str : String) : IO ProofResult := do
+  let sys_data ← parse_ode_system_json json_str
+  let sys := construct_glucose_system sys_data.parameters
+
+  -- Apply pre-written proof template
+  match prove_picard_lindelof sys sys_data.t0 sys_data.x0 with
+  | some proof => return ⟨"success", some proof⟩
+  | none => return ⟨"failed", none⟩
+```
+
+**Phase 4: Lean Returns JSON Result**
+
+```json
+{
+  "proof_status": "success",
+  "theorem": "glucose_satisfies_picard_lindelof",
+  "constants_found": {"a": 10.5, "r": 0.0, "L": 15.2, "K": 1.0},
+  "verification_time_ms": 342
+}
+```
+
+**Or if proof fails:**
+
+```json
+{
+  "proof_status": "failed",
+  "error": "Lipschitz condition violated: RHS unbounded at x=0",
+  "failed_field": "norm_le",
+  "hint": "System may have singularity - check domain bounds"
+}
+```
+
+---
+
+#### What IS Automated vs Manual
+
+| Component | Automated | Manual |
+|-----------|-----------|--------|
+| **Python → JSON serialization** | ✅ Yes | Configure schema once |
+| **JSON → Lean parsing** | ✅ Yes | Write parser once |
+| **Proof template application** | ✅ Yes | Write proof once per theorem type |
+| **Proof tactic selection** | ❌ No | Human designs proof strategy |
+| **Theorem statement writing** | ❌ No | Human formalizes mathematics |
+| **Mathlib lemma discovery** | ❌ No | Human finds relevant theorems |
+
+---
+
+#### Analogy: Compiler vs Code Generator
+
+**This architecture is like:**
+
+**Compiler model** (what we're building):
+- You write C code (parametric Lean proofs)
+- Compiler applies it to different inputs (JSON data)
+- Same compiled code works for many inputs
+
+**NOT a code generator** (what we're NOT building):
+- Automatically generates C code from requirements
+- AI writes the program for you
+- No human programming needed
+
+**Similarly:**
+- You write Lean proofs (parametric templates)
+- JSON provides data to instantiate templates
+- Same proof works for many parameter values
+
+**We're NOT building:**
+- Automatic proof generator from JSON
+- AI that writes Lean proofs
+- No human proving needed
+
+---
+
+#### Learning Path Connection (Phase 3A/3B)
+
+**Why you're learning Lean deeply:**
+
+1. **Write proof templates** (Phase 3)
+   - `theorem decay_satisfies_picard_lindelof` (you wrote this)
+   - `theorem lorenz_satisfies_picard_lindelof` (Phase 3B)
+   - `theorem glucose_satisfies_picard_lindelof` (Phase 3C)
+
+2. **Understand what Lean needs** (informs Phase 2B JSON schema)
+   - What fields? (equations, parameters, domain)
+   - What format? (symbolic strings, numeric values)
+   - What constraints? (parameter bounds, time intervals)
+
+3. **Know what's feasible** (realistic Phase 3 scope)
+   - Well-definedness proofs: ✅ Feasible (Picard-Lindelöf)
+   - Existence proofs: ✅ Feasible (apply Mathlib theorems)
+   - Structural isomorphism: ⚠️ Hard (research-level)
+   - Full stability analysis: ⚠️ Very hard (may need custom lemmas)
+
+---
+
+#### Alternatives Considered
+
+**Alternative 1: Automated Theorem Proving (ATP)**
+
+Use automated provers (Z3, Vampire, E) instead of Lean:
+- Pro: Can find proofs automatically for some theorems
+- Con: Limited to decidable fragments (first-order logic, SMT)
+- Con: Can't handle analysis (reals, derivatives, ODEs)
+- Con: No parametric proofs (re-prove for each parameter set)
+- **Decision:** Not suitable for ODE verification
+
+**Alternative 2: Proof Synthesis**
+
+Generate Lean tactics from specifications:
+- Pro: Less manual proof writing
+- Con: No general synthesis algorithm exists
+- Con: Research problem (active area of ML4TP)
+- Con: Would require training data we don't have
+- **Decision:** Beyond project scope
+
+**Alternative 3: Interactive Proof Development** [CHOSEN]
+
+Write Lean proofs manually, parameterize over system data:
+- Pro: Works for complex analysis theorems
+- Pro: Proofs reusable across parameter values
+- Pro: Lean's ecosystem (Mathlib) provides lemmas
+- Con: Requires learning Lean (Phase 3A/3B)
+- Con: Each theorem type needs manual proof
+- **Decision:** Only feasible approach for ODE verification
+
+---
+
+#### Rationale for This Architecture
+
+**Why parametric proofs work:**
+
+1. **Mathematical structure is reusable**
+   - All polynomial ODEs are Lipschitz (same proof strategy)
+   - All bounded continuous functions satisfy Picard-Lindelöf (same tactic)
+   - Write proof once, works for entire system class
+
+2. **Parameters are data, not logic**
+   - `σ = 10` vs `σ = 15` doesn't change proof structure
+   - Only changes numerical bounds in computation
+   - JSON provides numbers, Lean applies reasoning
+
+3. **Verification ≠ Proof discovery**
+   - Lean **verifies** your proof is correct
+   - You **construct** the proof using tactics
+   - JSON **provides data**, not proof strategies
+
+---
+
+#### Impact on Phase 2B Design
+
+**JSON schema must include:**
+
+1. **System specification** (equations, parameters)
+   - Lean parses into system structure
+   - Used to instantiate parametric proofs
+
+2. **Proof request metadata** (initial condition, time interval, domain)
+   - Lean uses to compute bounds (a, r, L, K)
+   - Not part of proof logic, just numerical inputs
+
+3. **Verification configuration** (timeout, memory limits)
+   - Controls Lean subprocess execution
+   - Not related to mathematical content
+
+**JSON schema does NOT include:**
+- ❌ Proof tactics or strategies
+- ❌ Lean code fragments
+- ❌ Theorem statements
+- ❌ Mathlib lemma names
+
+---
+
+#### Trade-offs Accepted
+
+**Manual proof writing:**
+- Con: Requires Lean expertise (Phase 3A learning investment)
+- Con: Each system class needs proof template
+- Pro: Proofs are verified, not heuristic
+- Pro: Templates reusable across instances
+- Pro: Correct by construction
+
+**Parametric proof limitation:**
+- Con: Can't handle arbitrary systems (only predefined classes)
+- Con: Novel system types need new proof templates
+- Pro: Common system classes well-supported (polynomial, smooth)
+- Pro: Extensible (add new templates incrementally)
+
+**No automated synthesis:**
+- Con: Can't automatically verify arbitrary conjectures
+- Con: Human bottleneck in proof development
+- Pro: Realistic scope for PhD-level project
+- Pro: Demonstrates understanding of formal methods
+- Pro: Portfolio showcases manual theorem proving skill
+
+---
+
+#### Future Work (Beyond Current Scope)
+
+**Potential enhancements:**
+
+1. **Proof tactic library**
+   - Common lemmas for ODE classes (polynomial_lipschitz, exponential_bounded)
+   - Reusable sub-proofs as Lean functions
+   - Reduces proof length, increases reusability
+
+2. **Metaprogramming for boilerplate**
+   - Lean macros to generate structure field proofs
+   - Automate repetitive parts (not core logic)
+   - Still requires human-designed proof strategy
+
+3. **Proof repair on parameter changes**
+   - If proof fails, suggest bound adjustments
+   - "Increase domain radius to 15.0" (heuristic, not synthesis)
+   - Helps debugging, doesn't write proofs
+
+**None of these "generate proofs from JSON"** - they assist human proof development.
+
+---
+
+**Summary:** JSON is a data pipe between Python (numerical discovery) and Lean (formal verification). Proofs are manually written once as parametric templates in Lean, then reused across different parameter values provided via JSON. This architecture is realistic, feasible, and demonstrates deep understanding of both numerical methods and formal verification.
+
+---
+
 ## Future Enhancements
 
 ### Solver Timeout Parameter
@@ -822,3 +1165,95 @@ Current quality target runs `black` + `ruff` only. Mypy commented out in Makefil
 ## Timeline Reference
 
 See SPRINT_TRACKING.md for detailed timeline of when these decisions were made and how implementation progressed.
+
+---
+
+### ADR #16: Lean 4 Proof Methodology - Fixed Interval First
+
+**Date:** 2026-01-20  
+**Status:** Accepted  
+**Context:** Phase 3A - First complete Picard-Lindelöf proof in Lean 4
+
+**Decision:** Prove Picard-Lindelöf for decay equation on **fixed interval** `[-0.1, 0.1]` before attempting parametric generalization.
+
+**Problem:**
+- Need to prove existence/uniqueness for decay ODE: `dx/dt = -x`
+- Picard-Lindelöf requires 4 conditions with parameters `a, r, L, K`
+- Parameters must satisfy consistency: `L * max(tmax-t0, t0-tmin) ≤ a - r`
+- Initial attempt with `[-1, 1]` interval **failed** consistency check
+
+**Alternatives Considered:**
+
+1. **Parametric proof directly** (write general theorem for any interval)
+   - Pro: Most general, needed for JSON bridge ultimately
+   - Con: Complex, requires parameter formulas, harder to debug
+   - Con: Learning curve steep for first Lean proof
+
+2. **Fixed interval approach** (prove for specific `[-0.1, 0.1]` first)
+   - Pro: Concrete values simplify debugging
+   - Pro: Validates proof structure before generalization
+   - Pro: Can test all 4 tactic patterns independently
+   - Con: Need second proof for parametric version
+
+3. **Very small interval** (e.g., `[-0.01, 0.01]`)
+   - Pro: Even easier to satisfy constraints
+   - Con: Too restrictive, doesn't validate realistic use case
+
+**Choice:** Alternative 2 (Fixed interval)
+
+**Rationale:**
+- First complete Lean proof from scratch - learning priority
+- Concrete values make parameter constraints transparent
+- Discovered consistency issue early (interval size matters!)
+- Proof tactics transferable to parametric version
+- Can extend to general theorem after validation
+
+**Trade-offs:**
+- Extra work to generalize later (acceptable for learning)
+- Fixed interval less useful for JSON bridge (temporary limitation)
+
+**Implementation Details:**
+
+```lean
+-- Helper: proof that 0 ∈ [-0.1, 0.1]
+def t0_in_interval : (0 : Real) ∈ Set.Icc (-0.1) 0.1 := by norm_num
+
+theorem decay_picard_specific :
+    ∃ (a r L K : NNReal),
+    IsPicardLindelof decay_rhs ⟨0, t0_in_interval⟩ 5 a r L K := by
+  use 1, 0, 6, 1  -- Concrete values
+  constructor
+  case lipschitzOnWith => simp [decay_rhs]
+  case continuousOn => intro x hx; simp [decay_rhs]; exact continuousOn_const
+  case norm_le => ...  -- Triangle inequality calc chain
+  case mul_max_le => simp; norm_num
+```
+
+**Parameters Chosen:**
+- `a = 1`: State ball radius (x ∈ [4, 6])
+- `r = 0`: Single IC, no neighborhood  
+- `L = 6`: Norm bound (max |-x| = 6 on [4,6])
+- `K = 1`: Lipschitz constant (slope of -x)
+
+**Consistency Check:**
+```
+6 * max(0.1 - 0, 0 - (-0.1)) ≤ 1 - 0
+6 * 0.1 ≤ 1
+0.6 ≤ 1  ✅
+```
+
+**Lessons Learned:**
+1. Picard-Lindelöf parameters tightly coupled (not independent)
+2. Smaller intervals easier to satisfy (local vs global guarantees)
+3. Concrete examples clarify abstract constraints
+4. Fixed-case proof is scaffold for parametric generalization
+
+**Next Phase:**
+- Generalize to `decay_picard` (arbitrary t0, x0, interval)
+- Compute `a, r, L` from interval size and IC
+- This enables JSON bridge (Python provides t0, x0, interval)
+
+**Status:** Phase 3A complete (Day 8) - ready for parametric generalization
+
+---
+
