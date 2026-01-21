@@ -6,7 +6,7 @@
 
 **TEACHING MODE:**
 - **Code implementation:** Guide user to write. NEVER write for them. Explain → user types → review → fix
-- **Documentation:** Write directly to save time (PORTFOLIO_NOTES.md, ARCHITECTURE.md, etc.)
+- **Documentation:** Write directly to save time (ARCHITECTURE.md, notes/*.md, etc.)
 - User learns by doing code, not docs
 
 **SELC Rephrasing:**
@@ -28,16 +28,21 @@ See `SPRINT_PLAN.md` for: project goals, sprint timeline, current day tasks, tec
 
 ## Notes Files (update these)
 
-**Update directly (after every session):**
-- `notes/SPRINT_TRACKING.md` - daily log
+**Public (tracked in repo):**
+- `ARCHITECTURE.md` - ADRs, design decisions
 
-**Update directly (when design choices made):**
-- `ARCHITECTURE.md` - ADRs (e.g., chose Strategy pattern, deferred feature)
-- `notes/PORTFOLIO_NOTES.md` - interview prep, learning reflections
+**Private (gitignored, not in repo):**
 
-**Reference as needed:**
-- `notes/DAY4_CATCH_UP.md` - catch-up checklist
-- `notes/PLOTTING_OOP_ARCHITECTURE.md` - viz spec
+Update after every session:
+- `notes/SPRINT_TRACKING.md` - private daily log, messy notes
+
+Update when design choices made:
+- `notes/PORTFOLIO_NOTES_PHASE1.md` - Phase 1 personal notes, learning reflections
+- `notes/PORTFOLIO_NOTES_PHASE2.md` - Phase 2 personal notes, decisions
+- `notes/PORTFOLIO_NOTES_PHASE3.md` - Phase 3 personal notes, tactics, proofs
+
+Reference as needed:
+- `notes/*.md` - various planning and reference docs (all private)
 
 ---
 

@@ -1,0 +1,15 @@
+name = "LeanBasics"
+version = "0.1.0"
+defaultTargets = ["leanbasics"]
+
+[[require]]
+name = "mathlib"
+scope = "leanprover-community"
+rev = "v4.26.0"
+
+[[lean_lib]]
+name = "LeanBasics"
+
+[[lean_exe]]
+name = "leanbasics"
+root = "Main"

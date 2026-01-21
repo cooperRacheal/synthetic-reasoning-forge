@@ -17,25 +17,31 @@
 - Contains the sprint structure, milestones, and objectives
 - Professional documentation for portfolio/collaboration
 
-**For personal tracking, use `SPRINT_TRACKING.md`:**
-- ❌ Gitignored (private)
+**For personal tracking, use `notes/SPRINT_TRACKING.md`:**
+- ❌ Private daily log (gitignored, not in repo)
 - Your daily updates, blockers, frustrations, messy notes
 - Write freely without worrying about polish
 
 **Architecture documentation:**
-- `ARCHITECTURE.md` - Phase 1 ADRs (✅ committed to git)
-- `notes/PHASE2_3_LEAN_BRIDGE.md` - Phases 2-3 design (gitignored until implementation begins)
+- `ARCHITECTURE.md` - All ADRs (Phases 1-3, ✅ committed to git)
 
 ---
 
 ## Sprint Overview
 
-**Timeline:** Monday (1/12/26) to Sunday (1/18/26) - 7 Days
+**Original Timeline:** Monday (1/12/26) to Sunday (1/18/26) - 7 Days
+**Actual Status:** Extended to Day 10+ (Wed 1/21/26 = Day 10)
 
-**Milestones:**
-- Days 1-5: Complete Phase 1 (Steps 1-16)
-- Day 6: Add glucose-insulin models (Phase 1.5) **Decision point**
-- Day 7: Demo + documentation
+**Original Milestones:**
+- Days 1-5: Complete Phase 1 (Steps 1-16) → ✅ Completed Day 6
+- Day 6: Add glucose-insulin models (Phase 1.5) → ⏭️ Skipped (pivoted to Lean learning)
+- Day 7: Demo + documentation → ⏭️ Deferred (pivoted to Lean learning)
+
+**Actual Progress:**
+- Days 1-6: Phase 1 complete + Phase 2A complete (ahead of schedule)
+- Day 7: Lean 4 learning (Sessions 1-2)
+- Days 8-9: Lean 4 learning + Phase 3A (first complete proof)
+- Day 10: Currently in progress
 
 ---
 
@@ -175,7 +181,7 @@ Complete Step 9 (Generic solver wrapper) + validate with trajectory plots
   - Implemented PlotConfig (11 attributes) and PhasePortraitPlotter ABC
   - Import tests passed
 
-**Architectural Decision:** Strategy + Factory pattern for plotting vs simple script. Chosen for extensibility (bifurcation diagrams, Poincaré sections, 4D+ projections) and OOP learning. Trade-off: 3-4 hour investment for production-grade reusable infrastructure. Documented in PORTFOLIO_NOTES.md ADR #1.
+**Architectural Decision:** Strategy + Factory pattern for plotting vs simple script. Chosen for extensibility (bifurcation diagrams, Poincaré sections, 4D+ projections) and OOP learning. Trade-off: 3-4 hour investment for production-grade reusable infrastructure. Documented in notes/PORTFOLIO_NOTES_PHASE1.md ADR #1.
 
 **Day 3 Continuation (Wed evening):**
 - Implemented plotters.py: TwoDimensionalPlotter and ThreeDimensionalPlotter
@@ -199,7 +205,7 @@ Complete Step 9 (Generic solver wrapper) + validate with trajectory plots
 - Damped pendulum with biologically relevant parameters (b=0.5, human limb swing)
 - Added textbook defaults to LorenzSystem (σ=10, ρ=28, β=8/3 - dimensionless)
 - Added textbook defaults to DampedPendulum (L=1.0m, b=0.2, m=1.0kg, g=9.81)
-- Created notes/REFERENCES.md documenting biomechanics literature for pendulum params
+- Created docs/REFERENCES.md documenting biomechanics literature for pendulum params
 - Fixed pyproject.toml packages=["src"] for correct import resolution
 - **Architecture validation achieved:** Factory automatically selects correct plotter based on data shape
 - Proved Strategy+Factory pattern delivers on extensibility promise
@@ -349,7 +355,7 @@ Day 6 repurposed for visual validation completion instead of glucose-insulin mod
 - 3 Lorenz regimes (chaotic, stable, convective) in 3D + 2D projections
 - Damped pendulum with biologically relevant parameters (b=0.5)
 - Added textbook defaults to LorenzSystem and DampedPendulum
-- Created notes/REFERENCES.md documenting biomechanics literature
+- Created docs/REFERENCES.md documenting biomechanics literature
 - Fixed pyproject.toml packages=["src"] for import resolution
 - Architecture validation complete: Factory automatically selects correct plotter
 - Git commit c0151ab: "feat(validation): add visual validation suite with biologically relevant defaults"
@@ -359,138 +365,131 @@ See Day 3 Notes section (lines 197-209) for full details.
 
 ---
 
-## Day 7 (Sunday Jan 18): Phase 2A - SymbolicMixin Foundation
+## Day 7 (Sunday Jan 18): Lean 4 Learning - Sessions 1-2
 
 ### Goal
-Implement symbolic equation extraction for LorenzSystem, validate mixin pattern and sympy integration.
+Begin Lean 4 learning path focused on ODE formalization and Picard-Lindelöf proofs.
 
-### Tasks (Phase 2A - Steps 1-8)
-- [ ] Step 1: Add sympy dependency to pyproject.toml (5 min)
-- [ ] Step 2: Create lean_bridge module structure (5 min)
-- [ ] Step 3: Implement SymbolicMixin in symbolic.py (30-45 min)
-- [ ] Step 4: Extend LorenzSystem with SymbolicMixin (30-45 min)
-- [ ] Step 5: Update lean_bridge/__init__.py exports (5 min)
-- [ ] Step 6: Write tests for SymbolicMixin (10+ tests, 45-60 min)
-- [ ] Step 7: Verify backward compatibility - all Phase 1 tests pass (10 min)
-- [ ] Step 8: Manual validation - interactive sympy exploration (5 min)
+### Actual Work Completed
+**Session 1A: First Proofs (30 min) ✅**
+- Created lean_learning project with Lake
+- Learned reflexivity (`rfl`), rewriting (`rw`), `exact` tactics
+- File: `LeanBasics/Arithmetic.lean`
 
-### Estimated Time
-2-3 hours (teaching mode, first time with sympy)
+**Session 1B: Types & Structures (1 hour) ✅**
+- Implemented StateSpace and ODESystem structures in Lean
+- Created simple harmonic oscillator example
+- Learned dependent types, `Fin n`, matrix notation
+- File: `LeanBasics/ODETypes.lean`
 
-### End-of-Day Checkpoint (Validation Gate)
-- [ ] ✅ Sympy installed and importable
-- [ ] ✅ SymbolicMixin implemented with lazy caching
-- [ ] ✅ LorenzSystem extended with symbolic support
-- [ ] ✅ 10+ tests passing for symbolic functionality
-- [ ] ✅ All 33 Phase 1 tests still pass (backward compatibility)
-- [ ] ✅ Manual validation confirms symbolic equations correct
+**Session 2A: Core Tactics (1 hour) ✅**
+- Mastered 6 core tactics: `rfl`, `intro`, `exact`, `apply`, `rw`, `simp`
+- Practiced hypothesis rewriting and tactic chaining
+- File: `LeanBasics/CoreTactics.lean`
 
-**Deliverable:**
-```python
-lorenz = LorenzSystem()
-equations = lorenz.get_symbolic_equations()
-# Returns: {'x': sigma*(y - x), 'y': x*(rho - z) - y, 'z': x*y - beta*z}
-```
+**Session 2B: Analysis Tactics (1.5 hours) ✅**
+- Learned `ring`, `norm_num`, `field_simp`, `fun_prop`, `have`
+- **Capstone:** Proved Lorenz system RHS continuous
+- File: `LeanBasics/AnalysisTactics.lean`
+
+### Time Spent
+~4 hours total (planned 2.5 hours, went deeper for thorough understanding)
 
 ### Notes
-
-**Phase 2 Strategy Change (Jan 17):**
-Adopted incremental/phased approach with 3 sub-phases (2A → 2B → 2C) instead of all-at-once implementation. User preference: validation checkpoints, no sympy/Lean experience. Timeline: Complete Phase 2 by Day 12 (Jan 24).
+**NOTE:** Phase 2A (SymbolicMixin) was actually completed on Day 6 evening, not Day 7. Day 7 pivoted to Lean learning after Phase 1 + Phase 2A both completed ahead of schedule on Day 6.
 
 ---
 
-## Day 8 (Monday Jan 19): Testing Complete + Demo + Documentation
+## Day 8 (Monday Jan 19): Rest/Undocumented Day
 
-### Goal
-Finalize testing, create demo, polish documentation
-
-### Tasks
-- [ ] **Morning: Complete testing (2-3 hours)**
-  - Finish any remaining tests from Day 7
-  - Final pytest run with coverage verification
-  - Ensure 80%+ coverage achieved
-  - Git commit: "test: add comprehensive unit test suite (Day 4+5 catch-up)"
-
-- [ ] **Afternoon: Demo + Documentation (2-3 hours)**
-  - Create `scripts/demo_solver.py`
-    - Demonstrate Lorenz system (chaotic attractor)
-    - Demonstrate Pendulum system (damped oscillation)
-    - Show solver method selection + auto-fallback
-    - Print summary statistics
-  - Update README with Phase 1 completion status
-    - Usage examples
-    - Installation instructions
-    - Testing instructions
-  - Update SPRINT_TRACKING.md with week summary
-  - Final verification: run all tests, run demo, verify examples/
-
-### Estimated Time
-4-6 hours
-
-### End-of-Day Checkpoint
-- [ ] All tests passing (pytest tests/unit/ -v)
-- [ ] Coverage ≥80%
-- [ ] Demo script works
-- [ ] Documentation updated
-- [ ] All code committed to git
-- [ ] **Phase 1 Complete! 🎉**
-
-### **Phase 1 Complete! 🎉**
+### Status
+⚠️ No documented work this day (may have been rest day or undocumented progress)
 
 ### Notes
-
-**Timeline Adjustment (Jan 17):**
-Day 8 now completes Phase 1 instead of Day 7. Comprehensive testing + demo + docs require full Day 7 + Day 8 morning/afternoon.
-
-**ACTUAL Day 8 (Jan 20):**
-- Phase 1 completed Days 1-6 (solver + viz + testing all done)
-- Phase 2A completed Day 6 (SymbolicMixin already implemented)
-- **Day 7:** Lean 4 learning (Sessions 1A, 1B, 2A, 2B complete)
-- **Day 8 (today):** Phase 3A - Specific decay proof COMPLETE ✅
-  - Completed `decay_picard_specific` theorem: all 4 Picard-Lindelöf cases proven
-  - Interval: `[-0.1, 0.1]`, IC: `x(0)=5`, Parameters: `a=1, r=0, L=6, K=1`
-  - Debugged parameter constraint issue (consistency condition)
-  - File: `lean/lean_learning/LeanBasics/PicardExample.lean` (95 lines)
-  - **Remaining work:** General `decay_picard` (parametric), other systems (Lorenz, etc.)
-- See `notes/SPRINT_TRACKING.md` Day 8 for full session
-- See `notes/PORTFOLIO_NOTES_PHASE3.md` for learnings
-
+Gap in tracking - no entries in SPRINT_TRACKING.md for this date.
 
 ---
 
-## Day 9 (Tuesday Jan 20): Start Lean Architecture (Phase 2)
+## Day 9 (Tuesday Jan 20): Phase 3A - First Complete Lean Proof
 
-### Goal
-Begin Python-Lean bridge architecture design and implementation
+### Goal (Actual)
+Complete first Picard-Lindelöf proof in Lean 4 for exponential decay system.
 
-### Tasks
-- [ ] Review PHASE2_3_LEAN_BRIDGE.md architecture design
-- [ ] Install Lean 4 toolchain
-- [ ] Design JSON schema for system representation
-- [ ] Create initial Lean subprocess runner prototype
-- [ ] Document Phase 2 approach in architecture files
+### Work Completed ✅
+**Phase 3A: decay_picard_specific theorem proven**
+- [x] Proved all 4 Picard-Lindelöf cases for fixed interval `[-0.1, 0.1]`
+  - Case 1: Lipschitz continuity (K=1)
+  - Case 2: Time continuity (constant RHS)
+  - Case 3: Norm bound (L=6) using calc chains
+  - Case 4: Consistency condition (6 * 0.1 ≤ 1)
+- [x] Debugged parameter constraint issues (interval size matters!)
+- [x] Deep dive walkthrough session (5-6 hours)
+- [x] Created LaTeX proof document for portfolio
+- [x] File: `lean/lean_learning/LeanBasics/PicardExample.lean`
 
-### Estimated Time
-Full day exploration + initial implementation
+### Parameters Used
+- Interval: `[-0.1, 0.1]`, IC: `x(0)=5`
+- Constants: `a=1, r=0, L=6, K=1`
+- System: `dx/dt = -x` (exponential decay)
+
+### Time Spent
+~10-11 hours total (proof: 5-6 hrs, walkthrough: 5-6 hrs)
+
+### Key Learnings
+- Picard-Lindelöf parameters tightly coupled (not independent)
+- Smaller intervals easier to satisfy consistency condition
+- Calc chains in Lean for multi-step inequality proofs
+- Fixed interval proof validates approach before parametric generalization
 
 ### Notes
-
-**Phase 2 Start (Jan 20):**
-With Phase 1 complete (solver + visualization + comprehensive tests), begin Lean 4 integration work. Focus on minimal Python-Lean communication before full formalization.
+**Mislabeled in SPRINT_TRACKING.md:** This day's work was labeled "Day 8 (Monday, Jan 20)" but should be "Day 9 (Tuesday, Jan 20)".
 
 ---
 
-## Day 10 (Wednesday Jan 21): Continue Lean Architecture
+## Day 10 (Wednesday Jan 21): Documentation Alignment
 
-### Goal
-Continue Phase 2 implementation or assess progress
+### Goal (Current)
+Align all documentation to reflect accurate timeline and project status.
+
+### Status
+⏳ In Progress
 
 ### Tasks
-- TBD based on Day 9 progress
+- [ ] Update SPRINT_PLAN.md with correct day numbers (Day 1 = Mon 1/12)
+- [ ] Update README.md Phase 2A checkboxes
+- [ ] Update ARCHITECTURE.md dates
+- [ ] Verify SPRINT_TRACKING.md accuracy
+- [ ] Decide next steps (Phase 2B, Lean parametric proof, or other)
 
 ---
 
-## Day 11 (Thursday Jan 22): Sprint End / Decision Point
+## Days 11+ (Future): Phase 2B/2C or Lean Continuation
+
+### Options
+
+**Option A: Complete Phase 2B (JSON Serialization)**
+- Implement ODESystemMetadata dataclass
+- Extend DampedPendulum with SymbolicMixin
+- JSON schema for Lean bridge
+- Estimated: 2-3 hours
+
+**Option B: Lean Parametric Proof**
+- Generalize decay_picard for arbitrary (t0, x0, interval)
+- Compute a, L from interval size
+- Enables JSON bridge integration
+- Estimated: 3-4 hours
+
+**Option C: Second System Proof (Lorenz or Pendulum)**
+- Practice proof template reuse
+- Validate approach on different system
+- Estimated: 4-5 hours
+
+**Decision:** TBD based on user preference and project priorities
+
+
+---
+
+## Sprint Assessment & Decision Point (Days 11+)
 
 ### Goal
 Assess progress and decide next steps
@@ -607,20 +606,19 @@ At the end of each day, update the SPRINT_TRACKING.md file with:
 
 ## Progress Tracker
 
-| Day | Goal | Status | Notes |
-|-----|------|--------|-------|
-| 1 (Mon) | Foundation Infrastructure | ✅ Complete | Steps 4-6 done Day 2 |
-| 2 (Tue) | Test Systems | ✅ Complete | Steps 7-8 done Day 2 |
-| 3 (Wed) | Generic Solver + Visualization | ✅ Complete | Solver + full viz architecture complete Day 5 |
-| 4 (Thu) | Testing Infrastructure | ✅ Complete | Completed Day 6 (33 unit tests) |
-| 5 (Fri) | Quality Checks | ✅ Complete | Completed Day 6 (95% coverage, black, ruff) |
-| 6 (Sat) | Visual Validation + Phase 2 Planning | ✅ Complete | 7 plots, 33 tests, Phase 1 merged (PR #1), Phase 2A plan approved |
-| 6 (Sat Eve) | **Phase 2A: SymbolicMixin** | ✅ Complete | Completed same day! 43 tests (33+10), mixin+tests, ahead of schedule |
-| 7 (Sun) | **Lean 4 Learning - Sessions 1-2** | ✅ Complete | 4 hrs: First proofs, structures, core tactics, analysis tactics. Prepares Phase 2B/2C design |
-| 8 (Mon) | **Lean 4 Learning - Sessions 3-4** | 🔜 Not Started | Mathlib navigation, formalize Lorenz, JSON schema, proof requests (4 hrs remaining) |
-| 9-10 (Tue-Wed) | **Phase 2B: Serialization** | 🔜 Not Started | ODESystemMetadata, extend DampedPendulum, JSON tests |
-| 11 (Thu) | **Phase 2C: Proof Request** | 🔜 Not Started | LeanProofRequest, factory functions, integration tests |
-| 12 (Fri) | **Phase 2 Complete** | 🔜 Not Started | Documentation, buffer for catchup |
+| Day | Date | Goal | Status | Notes |
+|-----|------|------|--------|-------|
+| 1 | Mon 1/12 | Foundation Infrastructure | ✅ Complete | Steps 4-6 done Day 2 |
+| 2 | Tue 1/13 | Test Systems | ✅ Complete | Steps 7-8 done Day 2 |
+| 3 | Wed 1/14 | Generic Solver + Visualization | ✅ Complete | Solver + full viz architecture complete Day 5 |
+| 4 | Thu 1/15 | Testing Infrastructure | ⏭️ Skipped | Behind schedule - no work this day |
+| 5 | Fri 1/16 | Quality Checks | ✅ Complete | Catch-up day: viz complete, solver enhanced |
+| 6 | Sat 1/17 | Visual Validation + Phase 2A | ✅ Complete | 7 plots, 43 tests, Phase 1 merged (PR #1), Phase 2A SymbolicMixin complete |
+| 7 | Sun 1/18 | **Lean 4 Learning - Sessions 1-2** | ✅ Complete | 4 hrs: First proofs, structures, core tactics, analysis tactics |
+| 8 | Mon 1/19 | **Unknown/Rest Day** | ⚠️ No Documentation | No tracked work this day |
+| 9 | Tue 1/20 | **Phase 3A: First Lean Proof** | ✅ Complete | decay_picard_specific theorem proven (all 4 cases), deep dive walkthrough |
+| 10 | Wed 1/21 | **Current Day** | ⏳ In Progress | Documentation alignment, next steps planning |
+| 11+ | TBD | **Phase 2B/2C or Lean continuation** | 🔜 Not Started | ODESystemMetadata, LeanProofRequest, or parametric proofs |
 
 **Legend:**
 - 🔜 Not Started
@@ -754,7 +752,7 @@ sol = solve_ode(system, t_span, y0, plot=True, save_path='output.png')
 
 ---
 
-**Last Updated:** 2026-01-17
-**Sprint Start:** Monday, 2026-01-12
-**Sprint End:** Sunday, 2026-01-19
-**Status:** Active
+**Last Updated:** 2026-01-21 (Day 10)
+**Sprint Start:** Monday, 2026-01-12 (Day 1)
+**Original End:** Sunday, 2026-01-18 (Day 7)
+**Actual Status:** Extended - Day 10+ in progress

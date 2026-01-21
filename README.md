@@ -34,23 +34,24 @@ Symbolic equation extraction and JSON serialization for formal verification pipe
 - Conjecture packaging API (LeanProofRequest for structural isomorphisms)
 - Subprocess communication layer (planned)
 
-### Phase 3: Lean Formal Verification (📋 PLANNED)
-Automated proof generation and verification for mathematical equivalences between biological and control systems.
+### Phase 3: Lean Formal Verification (⏳ IN PROGRESS)
+Manual proof development in Lean 4 for ODE system properties and structural isomorphisms.
 
+**Current:** Phase 3A complete (first Picard-Lindelöf proof for exponential decay)
 **Goal:** Formally prove that biological regulation (glucose-insulin homeostasis) is mathematically equivalent to classical control systems (PID controllers).
 
 ## Technical Stack
 
 | Component | Technology | Status |
 |-----------|------------|--------|
-| **Formal Kernel** | Lean 4 (v4.26.0) | Planned (Phase 3) |
+| **Formal Kernel** | Lean 4 (v4.26.0) | ⏳ Phase 3A active |
 | **Orchestration** | Python 3.11+ | ✅ Active |
 | **Numerical Computing** | NumPy ≥1.24, SciPy ≥1.11 | ✅ Phase 1 |
-| **Symbolic Math** | SymPy ≥1.12 | 🔨 Phase 2 |
+| **Symbolic Math** | SymPy ≥1.12 | ✅ Phase 2A |
 | **Visualization** | Matplotlib ≥3.8 | ✅ Phase 1 |
-| **Testing** | pytest ≥8.0, pytest-cov | ✅ 95% coverage |
+| **Testing** | pytest ≥8.0, pytest-cov | ✅ 95% coverage (43 tests) |
 | **Quality Tools** | Black, Ruff, Mypy | ✅ Black + Ruff passing |
-| **Integration Layer** | LeanDojo / lean-client-python | Planned (Phase 3) |
+| **Integration Layer** | LeanDojo / lean-client-python | 📋 Planned (Phase 3C) |
 | **Build System** | pyproject.toml / hatchling | ✅ Active |
 | **Version Control** | Git / GitHub | ✅ Active |
 
@@ -82,29 +83,74 @@ reasoning_forge/
 │   │   ├── plotters.py            # 2D/3D concrete implementations
 │   │   ├── factory.py             # PlotterFactory registry
 │   │   └── __init__.py            # Public API (plot_phase_portrait)
-│   └── lean_bridge/            # Phase 2: Python-Lean bridge (in progress)
-│       ├── symbolic.py            # SymPolicMixin (sympy integration)
-│       ├── serialization.py       # ODESystemMetadata (JSON schema)
-│       └── proof_request.py       # LeanProofRequest API
+│   └── lean_bridge/            # Phase 2: Python-Lean bridge (Phase 2A complete)
+│       ├── symbolic.py            # SymbolicMixin (sympy integration) ✅
+│       ├── serialization.py       # ODESystemMetadata (JSON schema) - planned
+│       └── proof_request.py       # LeanProofRequest API - planned
 ├── tests/                   # Comprehensive test suite
 │   ├── conftest.py             # Pytest fixtures (systems, ICs, config)
-│   └── unit/                   # 33 unit tests, 95% coverage
-│       ├── test_solver.py         # Convergence, methods, auto-fallback
-│       ├── test_factory.py        # PlotterFactory registry
-│       ├── test_plotters.py       # 2D/3D plotter integration
-│       ├── test_plotting_api.py   # Public API dispatch
-│       ├── test_plotting_config.py # PlotConfig dataclass
-│       ├── test_exceptions.py     # Exception hierarchy
-│       └── test_logger.py         # Logger configuration
-└── lean/                    # Lean 4 formal verification (planned)
-    ├── ForgeLogic.lean         # Theorem definitions (Phase 3)
-    ├── lakefile.toml           # Lake build config
-    └── lean-toolchain          # Pinned Lean version
+│   └── unit/                   # 43 unit tests, 95% coverage
+│       ├── test_solver.py         # Convergence, methods, auto-fallback (8 tests)
+│       ├── test_systems.py        # System implementations (6 tests)
+│       ├── test_plotting_factory.py # PlotterFactory registry (4 tests)
+│       ├── test_plotting_plotters.py # 2D/3D plotter integration (4 tests)
+│       ├── test_plotting_api.py   # Public API dispatch (3 tests)
+│       ├── test_plotting_config.py # PlotConfig dataclass (2 tests)
+│       ├── test_exceptions.py     # Exception hierarchy (3 tests)
+│       ├── test_logger.py         # Logger configuration (3 tests)
+│       └── test_lean_bridge_symbolic.py # SymbolicMixin (10 tests)
+└── lean/                    # Lean 4 formal verification (Phase 3A active)
+    └── lean_learning/LeanBasics/ # Learning exercises + first proofs
+        ├── Arithmetic.lean        # Session 1A: First proofs
+        ├── ODETypes.lean          # Session 1B: Structures
+        ├── CoreTactics.lean       # Session 2A: Core tactics
+        ├── AnalysisTactics.lean   # Session 2B: Analysis tactics
+        └── PicardExample.lean     # Phase 3A: decay_picard_specific ✅
 ```
 
-## Current Status
+## Documentation Structure
 
-### Phase 1: Numerical Foundation ✅ COMPLETE
+### Public Files (Tracked in Repository)
+
+**Core Documentation:**
+- `README.md` - Project overview, setup instructions, usage examples
+- `ARCHITECTURE.md` - Architecture Decision Records (ADRs #1-16)
+- `SPRINT_PLAN.md` - Development timeline, milestones, progress tracking
+- `CLAUDE.md` - AI collaboration guidelines, communication protocols
+
+**Code & Proofs:**
+- `src/logic/` - Python ODE solver + visualization infrastructure
+- `tests/` - 43 unit tests (95% coverage)
+- `examples/` - Validation scripts and generated plots
+- `lean/lean_learning/LeanBasics/PicardExample.lean` - First Picard-Lindelöf proof
+- `lean/lean_learning/lakefile.toml`, `lean-toolchain` - Lean build config
+
+**Supporting Documentation:**
+- `docs/REFERENCES.md` - Scientific literature citations (biomechanics, control theory)
+
+### Private Files (Gitignored, Not in Repository)
+
+**Daily Logs:**
+- `notes/SPRINT_TRACKING.md` - Daily work log, messy notes, time tracking
+
+**Personal Learning Notes:**
+- `notes/PORTFOLIO_NOTES_PHASE1.md` - Phase 1 reflections and decisions
+- `notes/PORTFOLIO_NOTES_PHASE2.md` - Phase 2 SymbolicMixin notes
+- `notes/PORTFOLIO_NOTES_PHASE3.md` - Phase 3 Lean proof walkthrough notes
+
+**Planning & Exploration:**
+- `notes/*.md` - Various planning documents, catch-up checklists, architecture explorations
+
+**Rationale:** Private notes contain messy work-in-progress thoughts, personal reflections, and detailed daily logs. Public documentation captures polished decisions, architecture, and completed work suitable for collaboration and portfolio presentation.
+
+---
+
+## Current Status (Day 10 - January 21, 2026)
+
+**Timeline:** Started Monday Jan 12 (Day 1), currently Day 10 (Wed Jan 21)
+**Sprint Status:** Extended beyond original 7-day plan
+
+### Phase 1: Numerical Foundation ✅ COMPLETE (Days 1-6)
 - [x] Environment isolation (Python 3.11+ venv)
 - [x] Package manifest with dependencies (numpy, scipy, matplotlib, sympy)
 - [x] Generic ODE solver (method selection + auto-fallback for stiff systems)
@@ -113,36 +159,54 @@ reasoning_forge/
 - [x] Comprehensive testing: 33 unit tests, 95% code coverage
 - [x] Quality checks: Black + Ruff passing (Mypy deferred with documentation)
 - [x] Visual validation: 7 plots with biologically relevant parameters
-- [x] **Merged to main:** PR #1 (January 17, 2026)
+- [x] **Merged to main:** PR #1 (Day 6 - January 17, 2026)
 
-### Phase 2: Python-Lean Bridge 🔨 IN PROGRESS (Incremental)
+### Phase 2: Python-Lean Bridge 🔨 PARTIAL (Phase 2A Complete)
 **Strategy:** 3 sub-phases with validation checkpoints (5-8 hours total)
 
-**Phase 2A: SymbolicMixin Foundation (Current - Day 6)**
+**Phase 2A: SymbolicMixin Foundation ✅ COMPLETE (Day 6 - Jan 17)**
 - [x] Architecture design complete (ADRs #10-14 documented)
 - [x] Incremental implementation plan with 3 validation checkpoints
-- [ ] Add SymPy dependency
-- [ ] Implement SymbolicMixin (symbolic.py)
-- [ ] Extend LorenzSystem with symbolic support
-- [ ] Write 10+ tests for symbolic functionality
-- [ ] Verify backward compatibility (Phase 1 tests pass)
+- [x] Add SymPy dependency (sympy>=1.12,<2.0)
+- [x] Implement SymbolicMixin (symbolic.py) with lazy caching
+- [x] Extend LorenzSystem with symbolic support
+- [x] Write 10+ tests for symbolic functionality (10 tests added)
+- [x] Verify backward compatibility (all 43 tests pass)
+- [x] Branch: feat/phase2-lean-bridge (not yet merged)
 
-**Phase 2B: JSON Serialization (Days 8-9)**
+**Phase 2B: JSON Serialization (Not Started)**
 - [ ] ODESystemMetadata dataclass (serialization.py)
 - [ ] Sympy → Lean string conversion helpers
 - [ ] Extend DampedPendulum with symbolic support
 - [ ] Write serialization tests
 
-**Phase 2C: Proof Request API (Days 10-11)**
+**Phase 2C: Proof Request API (Not Started)**
 - [ ] LeanProofRequest dataclass (proof_request.py)
 - [ ] Factory functions for conjectures
 - [ ] Integration tests
 - [ ] Full workflow validation
 
-**Target:** Complete Phase 2 by Day 12 (Jan 24, 2026)
+**Original Target:** Complete Phase 2 by Day 12 (Jan 24, 2026) - Timeline adjusted, behind schedule
 
-### Phase 3: Lean Formal Verification 📋 PLANNED
-- [ ] Lean 4 toolchain initialization (elan/lake)
+### Phase 3: Lean Formal Verification ⏳ IN PROGRESS
+**Current Status:** Learning Lean 4, first proof complete
+
+**Phase 3A: First Lean Proof ✅ COMPLETE (Days 7-9 - Jan 18-20)**
+- [x] Lean 4 toolchain initialization (elan/lake)
+- [x] Lean learning sessions 1A-2B (4 hours)
+  - First proofs, types & structures, core tactics, analysis tactics
+- [x] Complete first Picard-Lindelöf proof (decay_picard_specific)
+  - System: dx/dt = -x on interval [-0.1, 0.1]
+  - All 4 cases proven (Lipschitz, continuity, norm bound, consistency)
+  - File: lean/lean_learning/LeanBasics/PicardExample.lean
+- [x] Deep dive proof walkthrough and LaTeX documentation
+
+**Phase 3B: Parametric Proofs (Not Started)**
+- [ ] Generalize decay_picard for arbitrary intervals
+- [ ] Prove Picard-Lindelöf for Lorenz system
+- [ ] Prove for Damped Pendulum system
+
+**Phase 3C: System Formalization (Not Started)**
 - [ ] Formalize glucose-insulin minimal model
 - [ ] Formalize PID controller system
 - [ ] Prove structural isomorphism theorem
@@ -209,12 +273,13 @@ python examples/validate_plotting.py
 
 ## Prerequisites
 
-### Phase 1 & 2 (Current)
+### Phase 1 & 2 (Python Development)
 - **Python 3.11+** — [Download](https://www.python.org/downloads/)
 - **Git** — For version control
 
-### Phase 3 (Future - Lean Integration)
-- **elan** (Lean version manager) — [Install guide](https://github.com/leanprover/elan)
+### Phase 3 (Lean Formal Verification - Currently Active)
+- **elan** (Lean version manager) — [Install guide](https://github.com/leanprover/elan) ✅ Installed
+- **Lean 4.26.0** — Managed via elan ✅ Active
 
 ## Setup & Installation
 

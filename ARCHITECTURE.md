@@ -2,9 +2,9 @@
 
 > **Purpose:** Document significant design choices and their rationale
 > **Scope:** Phase 1 implementation decisions (ODE solver + visualization)
-> **Last Updated:** 2026-01-17
+> **Last Updated:** 2026-01-21 (Day 10)
 
-**Note:** This file documents WHAT was decided and WHY. For WHEN and HOW implementation progressed, see notes/SPRINT_TRACKING.md. For future architecture (Phases 2-3), see notes/PHASE2_3_LEAN_BRIDGE.md.
+**Note:** This file documents WHAT was decided and WHY. For WHEN and HOW implementation progressed, see notes/SPRINT_TRACKING.md (private daily log, not in repo). Phase 2-3 architecture documented in ADRs #10-16 below.
 
 ---
 
@@ -200,7 +200,7 @@ Data analysis pipeline doesn't re-run statistical model for each visualization -
 
 **Validation Script:** Uses b = 0.5 for biological relevance (human limb swing).
 
-**Literature Documentation:** notes/REFERENCES.md
+**Literature Documentation:** docs/REFERENCES.md
 - Collins et al. (2009): Arms as passive pendulums during gait
 - Maus et al. (2016): Springy pendulum model for leg swing
 
@@ -1253,7 +1253,7 @@ theorem decay_picard_specific :
 - Compute `a, r, L` from interval size and IC
 - This enables JSON bridge (Python provides t0, x0, interval)
 
-**Status:** Phase 3A complete (Day 8) - ready for parametric generalization
+**Status:** Phase 3A complete (Day 9 - Jan 20, 2026) - ready for parametric generalization
 
 ---
 
