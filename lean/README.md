@@ -17,10 +17,14 @@ This directory contains Lean 4 code for formally verifying mathematical properti
 ```
 lean/
 ├── README.md                    # This file
-├── lakefile.toml                # Lean project configuration
+├── lakefile.toml                # Lean project configuration (ForgeLogic project)
 ├── lean-toolchain               # Lean version (4.26.0)
 ├── lake-manifest.json           # Dependency lock file
+├── ForgeLogic.lean              # UNUSED: Lake template (planned: Python-Lean bridge target)
+├── ForgeLogic/
+│   └── Basic.lean               # UNUSED: Lake template (planned: system definitions)
 └── lean_learning/               # Learning exercises and proofs
+    ├── Main.lean                # UNUSED: Lake executable template (hello world)
     ├── LeanBasics.lean          # Root module file
     ├── lakefile.toml            # LeanBasics project config
     ├── lean-toolchain           # Lean version specification
@@ -32,6 +36,13 @@ lean/
         ├── AnalysisTactics.lean # Session 2B: Analysis tactics (ring, norm_num, fun_prop)
         └── PicardExample.lean   # Phase 3A: First complete Picard-Lindelöf proof
 ```
+
+**Two Lake Projects:**
+
+1. **ForgeLogic** (top-level) - Phase 2C target for Python-Lean bridge, currently empty Lake templates
+2. **lean_learning** (subdirectory) - Phase 3A learning work, isolated from production
+
+**Scaffolding retained:** ForgeLogic prevents re-scaffolding when Phase 2B/2C resumes. Will contain Glucose, Lorenz, Pendulum definitions.
 
 ---
 
@@ -103,11 +114,9 @@ lake build -v
 
 ## Next Steps (Phase 3B)
 
-**Planned:**
-- Generalize `decay_picard` for arbitrary intervals and initial conditions
-- Prove Picard-Lindelöf for Lorenz system
-- Prove Picard-Lindelöf for Damped Pendulum system
-- Compute parameters `a, L` from interval size (enables JSON bridge)
+- Generalize `decay_picard` for arbitrary intervals/ICs
+- Prove Picard-Lindelöf: Lorenz, Damped Pendulum
+- Compute `a, L` from interval size → enables JSON bridge
 
 ---
 

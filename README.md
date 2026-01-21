@@ -12,9 +12,11 @@ The **Synthetic Reasoning Forge** is an experimental pipeline designed to automa
 
 The core objective is to transform fuzzy mathematical intuition into machine-verifiable proofs, ensuring that cross-domain analogies are not just metaphorical, but formally sound.
 
+**📍 Project Status:** See [STATUS.md](STATUS.md) for current completion state, explanation of dual phase naming (original 3-phase plan vs. execution sub-phases), and next steps decision point.
+
 ## System Architecture
 
-The Forge operates in three phases:
+The Forge operates in three phases (with execution sub-phases detailed in STATUS.md):
 
 ### Phase 1: Numerical Foundation (✅ COMPLETE)
 Python ODE solver with extensible visualization architecture for dynamical systems analysis.
@@ -25,20 +27,26 @@ Python ODE solver with extensible visualization architecture for dynamical syste
 - Test systems: Lorenz attractor, damped pendulum, pathological cases
 - Comprehensive testing: 44 unit tests, 95% code coverage
 
-### Phase 2: Python-Lean Bridge (🔨 IN PROGRESS)
+### Phase 2: Python-Lean Bridge (⚠️ PARTIAL - Phase 2A Complete)
 Symbolic equation extraction and JSON serialization for formal verification pipeline.
 
-**Components:**
-- Symbolic ODE representation (sympy integration)
-- JSON schema for system metadata (parameters, equations, state variables)
-- Conjecture packaging API (LeanProofRequest for structural isomorphisms)
-- Subprocess communication layer (planned)
+**Phase 2A (Complete):** SymbolicMixin foundation with lazy symbolic equation generation
+**Phase 2B/2C (Deferred):** JSON serialization and LeanProofRequest API
 
-### Phase 3: Lean Formal Verification (⏳ IN PROGRESS)
+**Components:**
+- ✅ Symbolic ODE representation (sympy integration) - Phase 2A
+- 📋 JSON schema for system metadata (parameters, equations, state variables) - Phase 2B planned
+- 📋 Conjecture packaging API (LeanProofRequest for structural isomorphisms) - Phase 2C planned
+- 📋 Subprocess communication layer - Future work
+
+### Phase 3: Lean Formal Verification (⚠️ STARTED - Phase 3A Complete)
 Manual proof development in Lean 4 for ODE system properties and structural isomorphisms.
 
-**Current:** Phase 3A complete (first Picard-Lindelöf proof for exponential decay)
-**Goal:** Formally prove that biological regulation (glucose-insulin homeostasis) is mathematically equivalent to classical control systems (PID controllers).
+**Phase 3A (Complete):** Lean learning + first Picard-Lindelöf proof (decay_picard_specific)
+**Phase 3B/3C (Not Started):** Parametric proofs, system formalization, isomorphism theorems
+
+**Current Status:** First complete proof validates feasibility of formal ODE verification
+**Long-term Goal:** Formally prove that biological regulation (glucose-insulin homeostasis) is mathematically equivalent to classical control systems (PID controllers).
 
 ## Technical Stack
 
@@ -117,6 +125,7 @@ reasoning_forge/
 
 **Core Documentation:**
 - `README.md` - Project overview, setup instructions, usage examples
+- `STATUS.md` - **Current project status, dual phase naming explanation, next steps**
 - `ARCHITECTURE.md` - Architecture Decision Records (ADRs #1-16)
 - `SPRINT_PLAN.md` - Development timeline, milestones, progress tracking
 - `CLAUDE.md` - AI collaboration guidelines, communication protocols
@@ -146,12 +155,20 @@ reasoning_forge/
 
 **Rationale:** Private notes contain messy work-in-progress thoughts, personal reflections, and detailed daily logs. Public documentation captures polished decisions, architecture, and completed work suitable for collaboration and portfolio presentation.
 
+**Understanding Phase Naming:**
+- `STATUS.md` explains dual naming: original 3-phase architecture (design) vs. execution sub-phases (2A/2B/2C, 3A/3B/3C)
+- `PHASE2_3_LEAN_BRIDGE.md` (private) describes the original 3-phase architectural vision
+- `SPRINT_PLAN.md` shows day-by-day actual execution timeline
+- When documentation mentions "Phase 2A" or "Phase 3A", these are execution milestones within the original phases
+
 ---
 
 ## Current Status (Day 10 - January 21, 2026)
 
 **Timeline:** Started Monday Jan 12 (Day 1), currently Day 10 (Wed Jan 21) - *calendar days, includes weekends*
 **Sprint Status:** Extended beyond original 7-day plan
+
+**📍 Quick Reference:** See [STATUS.md](STATUS.md) for detailed breakdown of what's complete vs. deferred, and explanation of why the project pivoted from Phase 2 to Phase 3 on Day 7.
 
 ### Phase 1: Numerical Foundation ✅ COMPLETE (Days 1-6)
 - [x] Environment isolation (Python 3.11+ venv)

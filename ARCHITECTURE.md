@@ -1,10 +1,12 @@
 # Architecture Decision Records
 
 > **Purpose:** Document significant design choices and their rationale
-> **Scope:** Phase 1 implementation decisions (ODE solver + visualization)
+> **Scope:** All phases (Phase 1 complete, Phase 2/3 partial)
 > **Last Updated:** 2026-01-21 (Day 10)
 
 **Note:** This file documents WHAT was decided and WHY. For WHEN and HOW implementation progressed, see notes/SPRINT_TRACKING.md (private daily log, not in repo). Phase 2-3 architecture documented in ADRs #10-16 below.
+
+**Project Status:** See [STATUS.md](STATUS.md) for current completion state and explanation of dual phase naming (original 3-phase plan vs. execution sub-phases 2A/2B/2C and 3A/3B/3C).
 
 ---
 
