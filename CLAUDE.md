@@ -30,15 +30,17 @@ See `SPRINT_PLAN.md` for: project goals, sprint timeline, current day tasks, tec
 - Phase 3B.1 paused at ~70% (parametric proof has 2 `sorry` cases remaining)
 - Building POC Python-Lean bridge using completed Phase 3A proof
 - Strategy: Learn subprocess/JSON/Lean I/O before finishing parametric proofs
-- Estimate: 3.5-4 hrs for POC, return to proofs with better context
+- Estimate: 7.5-8 hrs for enhanced POC, return to proofs with better context
 
-**Active Plan (CURRENT PRIORITY):** `/Users/rachealcooper/.claude/plans/wild-percolating-candle.md`
-- **POC Python-Lean Bridge** - Use Phase 3A specific-case proof (100% complete)
+**Active Plan (CURRENT PRIORITY):** `/Users/rachealcooper/.claude/plans/mossy-greeting-gem.md`
+- **Enhanced POC Python-Lean Bridge** - Use Phase 3A specific-case proof (100% complete)
 - Hardcoded values: x0=5, t∈[-0.1, 0.1], lambda=1
-- Deliverable: Working integration test demonstrating Python → JSON → Lean → Result
+- **Production architecture:** String-based JSON (exact decimals), custom exception hierarchy, comprehensive error handling, timeout support
+- Deliverable: Production-ready integration test demonstrating Python → JSON → Lean → Result
 - **Work on this plan EXCLUSIVELY until POC complete**
-- Estimate: 3.5-4 hrs
+- Estimate: 7.5-8 hrs (vs 3.5-4 hrs basic POC - trade-off for type correctness + better debugging)
 - Read full plan file for implementation details
+- **Supersedes:** `wild-percolating-candle.md` (basic POC, not implemented)
 
 **Background Plan (resume after POC):** `/Users/rachealcooper/.claude/plans/nested-honking-ladybug.md`
 - Vertical integration: 3 concrete systems (Decay → Lorenz → Pendulum) before abstraction
@@ -95,9 +97,9 @@ Reference as needed:
 ## Session Start (Read Active Plan)
 
 **Before starting work:**
-1. **PRIORITY:** Check POC plan: Read `/Users/rachealcooper/.claude/plans/wild-percolating-candle.md`
+1. **PRIORITY:** Check POC plan: Read `/Users/rachealcooper/.claude/plans/mossy-greeting-gem.md`
 2. Review todo list (shows POC progress)
-3. Continue POC implementation until complete (3.5-4 hrs estimated)
+3. Continue POC implementation until complete (7.5-8 hrs estimated)
 4. Background context: `/Users/rachealcooper/.claude/plans/nested-honking-ladybug.md` (resume after POC)
 
 **During POC implementation:**
@@ -107,7 +109,8 @@ Reference as needed:
 - When POC complete, user decides: continue to parametric proofs OR other work
 
 **After POC complete:**
-- Document learnings in PORTFOLIO_NOTES_PHASE2.md (bridge architecture)
+- Document learnings in PORTFOLIO_NOTES_PHASE2.md (bridge architecture, JSON design, subprocess patterns)
+- Document learnings in PORTFOLIO_NOTES_PHASE3.md (Lean I/O, error handling, type correctness)
 - Resume nested-honking-ladybug.md plan OR user redirects
 
 ---

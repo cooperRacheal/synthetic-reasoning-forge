@@ -18,16 +18,4 @@ class SolverConvergenceError(ForgeError):
     - Solution exhibits finite-time blow-up
     """
 
-
-class LeanTimeoutError(ForgeError):
-    """Lean subprocess exceeded time limit.
-
-    Used in Phase 2 when Lean kernel takes too long to verify a proof.
-    """
-
-
-class LeanVerificationError(ForgeError):
-    """Lean proof failed to verify.
-
-    Used in Phase 2 when Lean compiler rejects a proof attempt.
-    """
+    
