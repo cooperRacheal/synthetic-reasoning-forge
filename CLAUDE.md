@@ -24,12 +24,22 @@
 
 See `SPRINT_PLAN.md` for: project goals, sprint timeline, current day tasks, tech stack
 
-**Current:** Day 10 - Phase 1 merged, Phase 2A complete, Phase 3A complete
+**Current:** Day 11 (1/22) - Phase 1 merged, Phase 1.5 complete, Phase 2A complete, Phase 3A complete, Phase 3B.1 ~70% complete
+
+**Status:** Phase 3B.1 in progress - Decay parametric proof
+- ✅ Theorem structure, parametric values computed
+- ✅ lipschitzOnWith complete, continuousOn complete
+- ⚠️ norm_le in progress (need triangle inequality for |lambda*x| ≤ L)
+- ❌ mul_max_le not started
+- Estimate: 2-3 hrs remaining
+
+**Next session:** Complete norm_le + mul_max_le cases, build proof, document learnings
 
 **Active Plan:** `/Users/rachealcooper/.claude/plans/nested-honking-ladybug.md`
 - Implementation plan: 3 concrete systems (Decay → Lorenz → Pendulum) before abstraction
 - Estimate: 36-46 hrs total
-- Sequence: Phase 1.5 → 2A ext → 3B.1 → 2B → 3B.2 → 2C → 3B.3 → Testing
+- Original sequence: Phase 1.5 ✅ → 2A ext → 3B.1 → 2B → 3B.2 → 2C → 3B.3 → Testing
+- Actual sequence: Phase 1.5 ✅ → 3B.1 (now) → 2A ext (before 3B.3) → 2B → 3B.2 → 2C → 3B.3 → Testing
 - Read full plan file at session start for implementation details
 
 ---
