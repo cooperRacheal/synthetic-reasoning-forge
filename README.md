@@ -23,9 +23,9 @@ Python ODE solver with extensible visualization architecture for dynamical syste
 
 **Components:**
 - Generic ODE solver (scipy integration with method selection + auto-fallback)
-- Strategy + Factory pattern visualization (2D/3D phase portraits)
-- Test systems: Lorenz attractor, damped pendulum, pathological cases
-- Comprehensive testing: 44 unit tests, 95% code coverage
+- Strategy + Factory pattern visualization (1D/2D/3D: time-series + phase portraits)
+- Test systems: Lorenz attractor, damped pendulum, exponential decay, pathological cases
+- Comprehensive testing: 48 unit tests, 95% code coverage
 
 ### Phase 2: Python-Lean Bridge (⚠️ PARTIAL - Phase 2A Complete)
 Symbolic equation extraction and JSON serialization for formal verification pipeline.
@@ -57,7 +57,7 @@ Manual proof development in Lean 4 for ODE system properties and structural isom
 | **Numerical Computing** | NumPy ≥1.24, SciPy ≥1.11 | ✅ Phase 1 |
 | **Symbolic Math** | SymPy ≥1.12 | ✅ Phase 2A |
 | **Visualization** | Matplotlib ≥3.8 | ✅ Phase 1 |
-| **Testing** | pytest ≥8.0, pytest-cov | ✅ 95% coverage (44 tests) |
+| **Testing** | pytest ≥8.0, pytest-cov | ✅ 95% coverage (48 tests) |
 | **Quality Tools** | Black, Ruff, Mypy | ✅ Black + Ruff passing |
 | **Integration Layer** | LeanDojo / lean-client-python | 📋 Planned (Phase 3C) |
 | **Build System** | pyproject.toml / hatchling | ✅ Active |
@@ -74,8 +74,8 @@ reasoning_forge/
 ├── SPRINT_PLAN.md           # Development timeline
 ├── Makefile                 # Quality checks & test automation
 ├── examples/                # Validation scripts & visual outputs
-│   ├── validate_plotting.py    # 7 plots proving architecture
-│   └── output/                 # Generated phase portraits
+│   ├── validate_plotting.py    # 8 plots proving architecture (1D/2D/3D)
+│   └── output/                 # Generated phase portraits + time-series
 ├── src/logic/               # Python ODE solver + visualization
 │   ├── solver.py               # Generic ODE integration (scipy wrapper)
 │   ├── exceptions.py           # Custom exception hierarchy

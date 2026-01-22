@@ -1170,10 +1170,111 @@ See SPRINT_TRACKING.md for detailed timeline of when these decisions were made a
 
 ---
 
-### ADR #16: Lean 4 Proof Methodology - Fixed Interval First
+### ADR #16: ODEPlotter Base Class Refactor - Semantic Clarity Over Backward Compatibility
 
-**Date:** 2026-01-20  
-**Status:** Accepted  
+**Date:** 2026-01-22 (Day 11 - Phase 1.5)
+**Status:** Accepted
+**Context:** Phase 1.5 implementation revealed semantic mismatch in plotting infrastructure
+
+**Decision:** Rename `PhasePortraitPlotter` → `ODEPlotter` and `plot_phase_portrait()` → `plot_ode()` to accurately reflect support for both phase portraits AND time-series plots.
+
+**Problem:**
+- Original name `PhasePortraitPlotter` semantically incorrect for time-series visualizations
+- Phase portrait = state space plot (y vs z), NOT time domain (t vs y)
+- OneDimensionalPlotter creates time-series, not phase portraits
+- API function `plot_phase_portrait()` misleading when plotting decay transients
+
+**Alternatives Considered:**
+
+1. **Keep PhasePortraitPlotter, add TimeSeriesPlotter** (separate hierarchy)
+   - Pro: Backward compatible, no breaking changes
+   - Con: Duplication (both inherit same base functionality)
+   - Con: Factory dispatch becomes complex (dimension + plot type)
+   - Con: Violates DRY principle
+
+2. **Keep names, document inaccuracy** (do nothing)
+   - Pro: No refactoring cost
+   - Con: Perpetuates confusion
+   - Con: Poor developer experience
+   - Con: Misleading for future contributors
+
+3. **Rename to ODEPlotter** (semantic accuracy) [CHOSEN]
+   - Pro: Accurate terminology (covers all ODE visualizations)
+   - Pro: Extensible to transients (t vs x, t vs y for 3D systems)
+   - Pro: API consistency (plot_ode matches ODEPlotter)
+   - Con: Breaking change (5 files updated)
+   - Con: Time investment (~30-40 minutes)
+
+**Choice:** Alternative 3 (Semantic accuracy over backward compatibility)
+
+**Rationale:**
+- **Semantic accuracy:** ODEPlotter covers both phase portraits (state vs state) and time-series (time vs state)
+- **Extensibility:** Future transient plots (x vs t, y vs t from 3D systems) fit naturally
+- **API clarity:** `plot_ode(t, y)` clearly describes "plot ODE solution"
+- **No external users:** Internal API, safe breaking change
+- **Long-term value:** Correct terminology prevents future confusion
+
+**Implementation:**
+
+Files updated (5 total):
+1. `src/logic/plotting/base.py` - Class rename, docstring updates
+2. `src/logic/plotting/plotters.py` - Import updates
+3. `src/logic/plotting/factory.py` - Type hint updates
+4. `src/logic/plotting/__init__.py` - Function rename, exports
+5. `tests/unit/test_plotting_factory.py` - Test updates
+
+Files updated for API rename (3 total):
+1. `src/logic/plotting/__init__.py` - plot_phase_portrait → plot_ode
+2. `examples/validate_plotting.py` - All function calls
+3. `tests/unit/test_plotting_api.py` - Test class rename, function calls
+
+**Before:**
+```python
+from src.logic.plotting.base import PhasePortraitPlotter
+from src.logic.plotting import plot_phase_portrait
+
+class TwoDimensionalPlotter(PhasePortraitPlotter):
+    """2D phase portrait plotter."""
+    ...
+
+fig = plot_phase_portrait(t, y)  # Misleading for 1D time-series
+```
+
+**After:**
+```python
+from src.logic.plotting.base import ODEPlotter
+from src.logic.plotting import plot_ode
+
+class TwoDimensionalPlotter(ODEPlotter):
+    """2D phase portrait plotter (state vs state)."""
+    ...
+
+fig = plot_ode(t, y)  # Accurate for any ODE solution
+```
+
+**Trade-offs Accepted:**
+- **Breaking change:** No external users, all internal code updated
+- **Time investment:** 30-40 minutes refactoring across 8 files
+- **Test updates:** All plotting tests updated (no functionality change)
+- **Worth it:** Long-term clarity, accurate terminology, extensible design
+
+**Impact:**
+- OneDimensionalPlotter naturally fits under ODEPlotter base class
+- plot_ode accurately describes all use cases (phase portraits, time-series, transients)
+- Future extensions (Poincaré sections, bifurcation diagrams) fit naming scheme
+- Documentation clarity improved (no semantic mismatches)
+
+**Validation:**
+- All 48 tests pass after refactor
+- Visual validation script runs correctly
+- No behavioral changes (pure rename for clarity)
+
+---
+
+### ADR #17: Lean 4 Proof Methodology - Fixed Interval First
+
+**Date:** 2026-01-20 (Day 9)
+**Status:** Accepted
 **Context:** Phase 3A - First complete Picard-Lindelöf proof in Lean 4
 
 **Decision:** Prove Picard-Lindelöf for decay equation on **fixed interval** `[-0.1, 0.1]` before attempting parametric generalization.
@@ -1259,7 +1360,7 @@ theorem decay_picard_specific :
 
 ---
 
-### ADR #17: Phase 2B/2C Deferral - Learning-First Pivot
+### ADR #18: Phase 2B/2C Deferral - Learning-First Pivot
 
 **Date:** 2026-01-21 (Day 10, retrospective documentation per Phase Boundaries protocol)
 **Status:** Accepted

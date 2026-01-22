@@ -30,18 +30,19 @@
 ## Sprint Overview
 
 **Original Timeline:** Monday (1/12/26) to Sunday (1/18/26) - 7 Days
-**Actual Status:** Extended to Day 10+ (Wed 1/21/26 = Day 10)
+**Actual Status:** Extended to Day 11+ (Wed 1/22/26 = Day 11)
 
 **Original Milestones:**
 - Days 1-5: Complete Phase 1 (Steps 1-16) → ✅ Completed Day 6
-- Day 6: Add glucose-insulin models (Phase 1.5) → ⏭️ Skipped (pivoted to Lean learning)
+- Day 6: Add glucose-insulin models (Phase 1.5) → ⏭️ Originally skipped (pivoted to Lean learning), ✅ Revisited Day 11 (DecaySystem)
 - Day 7: Demo + documentation → ⏭️ Deferred (pivoted to Lean learning)
 
 **Actual Progress:**
 - Days 1-6: Phase 1 complete + Phase 2A complete (ahead of schedule)
 - Day 7: Lean 4 learning (Sessions 1-2)
 - Days 8-9: Lean 4 learning + Phase 3A (first complete proof)
-- Day 10: Currently in progress
+- Day 10: Feasibility analysis, Phase Boundaries protocol, implementation planning
+- Day 11: Phase 1.5 complete (DecaySystem with SymbolicMixin, OneDimensionalPlotter, ODEPlotter refactor)
 
 ---
 
@@ -774,8 +775,40 @@ sol = solve_ode(system, t_span, y0, plot=True, save_path='output.png')
 
 ---
 
+### Phase 1.5: DecaySystem Implementation
+**Status:** ✅ Complete (Day 11 - 3 hours)
+
+**Completed Work:**
+- DecaySystem Python class with SymbolicMixin (src/logic/systems/decay.py)
+  - Exponential decay: dx/dt = -λx
+  - Matches lean/ForgeLogic/PicardExample.lean structure
+  - Added to exports (src/logic/systems/__init__.py)
+- OneDimensionalPlotter for time-series (src/logic/plotting/plotters.py)
+  - Registered in PlotterFactory with dimension key 1
+  - Supports same PlotConfig options as 2D/3D plotters
+- ODEPlotter semantic refactor (5 files updated)
+  - Renamed PhasePortraitPlotter → ODEPlotter for accuracy
+  - Covers both phase portraits and time-series plots
+  - See ADR #16 in ARCHITECTURE.md
+- plot_ode API rename (3 files updated)
+  - plot_phase_portrait() → plot_ode() for clarity
+  - More accurate for all ODE solution visualizations
+- Decay visualization (examples/output/decay.png)
+  - Time-series with analytic solution overlay for validation
+  - Updated examples/validate_plotting.py and README.md
+- Testing: 48 tests passing (Phase 1: 33 → Phase 1.5: 48)
+  - DecaySystem: 3 unit tests (test_systems.py)
+  - OneDimensionalPlotter: 2 tests (test_plotting_plotters.py)
+  - synthetic_1d_trajectory fixture (tests/conftest.py)
+
+**Files Changed:** 15 total (2 new, 13 modified), +391 lines, -74 lines
+
+**Committed:** Locally (not pushed per user request)
+
+---
+
 ### Symbolic Tests for DampedPendulum and DecaySystem
-**Status:** Deferred to Phase 2A extension (Day 11)
+**Status:** Deferred to Phase 2A extension (pending)
 **Reason:** Consistency - complete symbolic test coverage when adding DampedPendulum symbolic support
 
 **Current State:**
@@ -784,7 +817,7 @@ sol = solve_ode(system, t_span, y0, plot=True, save_path='output.png')
 - DecaySystem: ✅ Has SymbolicMixin, ❌ no symbolic tests
 
 **Deferred Work:**
-- Add DampedPendulum symbolic support (Phase 2A extension per plan)
+- Add DampedPendulum symbolic support (Phase 2A extension per plan, ~30 min)
 - Add symbolic tests for both DampedPendulum and DecaySystem together
 - Maintain consistency: all SymbolicMixin systems have equivalent test coverage
 
@@ -812,7 +845,7 @@ sol = solve_ode(system, t_span, y0, plot=True, save_path='output.png')
 
 ---
 
-**Last Updated:** 2026-01-21 (Day 10)
+**Last Updated:** 2026-01-22 (Day 11)
 **Sprint Start:** Monday, 2026-01-12 (Day 1)
 **Original End:** Sunday, 2026-01-18 (Day 7)
-**Actual Status:** Extended - Day 10+ in progress
+**Actual Status:** Extended - Day 11 in progress
