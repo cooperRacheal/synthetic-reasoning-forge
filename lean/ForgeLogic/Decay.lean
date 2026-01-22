@@ -20,7 +20,12 @@ theorem decay_picard_parametric
   let a_val : NNReal := ⟨abs x0 + 1, by positivity⟩
   let L_val : NNReal := ⟨lambda * (2 * abs x0 + 1), by positivity⟩
   let k_val : NNReal := ⟨lambda, le_of_lt h_lambda_pos⟩
-  use a_val, (0: NNReal), L_val, k_val
+  let r_val : NNReal := ⟨max (t0 - tmin) (tmax - t0), by {
+    apply le_max_iff.mpr
+    left
+    linarith [h_interval.1]
+  }⟩
+  use a_val, r_val, L_val, k_val
   constructor
   case lipschitzOnWith =>
     intro t ht_in y hy_in z hz_in
@@ -37,8 +42,9 @@ theorem decay_picard_parametric
       _ ≤ lambda * y + ↑k_val * dist x y := by simp [k_val]
   case continuousOn =>
     intro x hx
+    apply Continuous.continuousOn
     simp [decay_rhs]
-    exact continuousOn_const
+    exact continuous_const
   case norm_le =>
     intro t ht x hx
     simp only [decay_rhs]
