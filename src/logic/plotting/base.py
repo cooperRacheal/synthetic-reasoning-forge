@@ -1,4 +1,4 @@
-"""Abstract base class for phase portrait plotters."""
+"""Abstract base class for ODE solution plotters."""
 
 from abc import ABC, abstractmethod
 
@@ -7,11 +7,12 @@ import numpy as np
 from numpy.typing import NDArray
 
 
-class PhasePortraitPlotter(ABC):
-    """Abstract base class for plotting phase portraits of ODE systems.
+class ODEPlotter(ABC):
+    """Abstract base class for plotting ODE solution trajectories.
 
-    This enforces a consistent interface across all visualization types
-    enabling the Factory pattern to work seamlessly.
+    Supports both phase-space plots (state vs state) and 
+    time-domain plots (time vs state). Enforces consistent interface
+    across all visualization types for Factory pattern compatibility.
     """
 
     @abstractmethod
@@ -23,7 +24,7 @@ class PhasePortraitPlotter(ABC):
         title: str | None = None,
         save_path: str | None = None,
     ) -> plt.Figure:
-        """Plot phase portrait for ODE solution.
+        """Plot ODE solution trajectory.
 
         Parameters
         ----------

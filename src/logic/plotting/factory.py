@@ -1,8 +1,8 @@
 """Factory for creating plotters based on dimensionality."""
 
 from src.logic.exceptions import ForgeError
-from src.logic.plotting.base import PhasePortraitPlotter
-from src.logic.plotting.plotters import ThreeDimensionalPlotter, TwoDimensionalPlotter
+from src.logic.plotting.base import ODEPlotter
+from src.logic.plotting.plotters import OneDimensionalPlotter, ThreeDimensionalPlotter, TwoDimensionalPlotter
 
 
 class PlotterNotFoundError(ForgeError):
@@ -26,18 +26,19 @@ class PlotterFactory:
 
     Register custom plotter:
 
-    >>> class BifurcationPlotter(PhasePortraitPlotter):
+    >>> class BifurcationPlotter(ODEPlotter):
     ... def plot(self, t, y, *kwargs): ...
     >>> PlotterFactory.register("bifurcation", BifurcationPlotter)
     """
 
-    _registry: dict[int, type[PhasePortraitPlotter]] = {
+    _registry: dict[int, type[ODEPlotter]] = {
+        1: OneDimensionalPlotter,
         2: TwoDimensionalPlotter,
         3: ThreeDimensionalPlotter,
     }
 
     @classmethod
-    def create(cls, n_dim: int) -> PhasePortraitPlotter:
+    def create(cls, n_dim: int) -> ODEPlotter:
         """Create plotter for given dimensionality.
 
         Parameters
@@ -47,7 +48,7 @@ class PlotterFactory:
 
         Returns
         -------
-        PhasePortraitPlotter
+        ODEPlotter
             Concrete plotter instance
 
         Raises
@@ -72,7 +73,7 @@ class PlotterFactory:
         return plotter_class()
 
     @classmethod
-    def register(cls, n_dim: int, plotter_class: type[PhasePortraitPlotter]) -> None:
+    def register(cls, n_dim: int, plotter_class: type[ODEPlotter]) -> None:
         """Register new plotter for dimensionality.
 
         Enable extending the factory without modifying this file.
@@ -81,12 +82,12 @@ class PlotterFactory:
         ----------
         n_dim : int
             Dimensionality this plotter handles
-        plotter_class : Type[PhasePortraitPlotter]
-            Plotter class to register (must inherit from PhasePortraitPlotter)
+        plotter_class : Type[ODEPlotter]
+            Plotter class to register (must inherit from ODEPlotter)
 
         Examples
         --------
-        >>> class CustomPlotter(PhasePortraitPlotter):
+        >>> class CustomPlotter(ODEPlotter):
         ...     def plot(self, t, y, **kwargs): ...
         >>> PlotterFactory.register(4, CustomPlotter)
         """

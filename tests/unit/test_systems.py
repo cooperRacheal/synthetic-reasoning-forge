@@ -4,6 +4,7 @@ import numpy as np
 from numpy.testing import assert_allclose
 
 from src.logic.systems.lorenz import LorenzSystem
+from src.logic.systems.decay import DecaySystem
 from src.logic.systems.pendulum import DampedPendulum
 
 
@@ -30,7 +31,25 @@ class TestLorenzSystem:
         assert sys.rho == 15.0
         assert sys.beta == 2.0
 
+class TestDecaySystem:
+    """Test Decay system implementation."""
 
+    def test_derivative_shape(self, decay_system, decay_ic):
+        """Derivative f() returns 1D vector for 1D state."""
+        dxdt = decay_system.f(0.0, decay_ic)
+        assert dxdt.shape == (1,)
+        assert dxdt.dtype == np.float64
+   
+    def test_default_parameters(self):
+        """Default parameter matches decay default."""
+        sys = DecaySystem()
+        assert sys.lambda_ == 1.0
+    
+    def test_custom_parameters(self):
+        """System accepts custom parameter values."""
+        sys = DecaySystem(lambda_ = 2.2)
+        assert sys.lambda_ == 2.2    
+    
 class TestDampedPendulum:
     """Test Damped Pendulum system implementation."""
 

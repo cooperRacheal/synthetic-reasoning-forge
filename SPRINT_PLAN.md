@@ -736,6 +736,66 @@ sol = solve_ode(system, t_span, y0, plot=True, save_path='output.png')
 
 ---
 
+### ODEPlotter Base Class Refactor and Extensions
+**Status:** Base class rename in progress (Day 11), extensions deferred to future sprint
+**Reason:** Semantic clarity - adding OneDimensionalPlotter (time-series) to existing PhasePortraitPlotter hierarchy
+
+**Day 11 Refactor: PhasePortraitPlotter → ODEPlotter**
+- **Motivation:** PhasePortraitPlotter semantically incorrect for time-series plots
+- **Change:** Rename base class from `PhasePortraitPlotter` to `ODEPlotter`
+- **Scope:** Name change only, no signature changes
+- **Files affected:** base.py, plotters.py, factory.py, __init__.py, test_plotting_factory.py
+- **Time estimate:** 10-15 minutes
+
+**Current Scope (Phase 1.5):**
+- Time-series plots (1D: time vs state) - OneDimensionalPlotter
+- Phase portraits 2D (state vs state) - TwoDimensionalPlotter
+- Phase portraits 3D (3D state space) - ThreeDimensionalPlotter
+
+**Future Extensions (Post-Phase 3):**
+- Bifurcation diagrams (parameter vs attractor/fixed points)
+- Poincaré sections (discrete trajectory sampling on manifold)
+- Vector fields and nullclines (phase plane analysis)
+- Basins of attraction (stability region colormaps)
+- Lyapunov exponent plots (chaos indicators)
+
+**Design Considerations:**
+- Current `plot(t, y, labels, title, save_path)` signature allows generalization:
+  - `t` → primary axis (time, parameter sweep, Poincaré return map index)
+  - `y` → dependent data (states, attractors, fixed points, exponents)
+- Factory pattern already supports registration of new plotter types via `PlotterFactory.register()`
+- May need separate ABC hierarchy if bifurcation/basin plotters require fundamentally different signatures
+- Defer abstraction until 2-3 non-trajectory plotters implemented (YAGNI principle)
+
+**Decision Rationale:**
+- Simpler docstrings now, document future plans separately
+- Avoid premature abstraction before requirements clear
+- Extensibility preserved through Factory pattern and Protocol-based design
+
+---
+
+### Symbolic Tests for DampedPendulum and DecaySystem
+**Status:** Deferred to Phase 2A extension (Day 11)
+**Reason:** Consistency - complete symbolic test coverage when adding DampedPendulum symbolic support
+
+**Current State:**
+- LorenzSystem: ✅ Full symbolic test coverage (10 tests in test_lean_bridge_symbolic.py)
+- DampedPendulum: ❌ No symbolic support yet, no tests
+- DecaySystem: ✅ Has SymbolicMixin, ❌ no symbolic tests
+
+**Deferred Work:**
+- Add DampedPendulum symbolic support (Phase 2A extension per plan)
+- Add symbolic tests for both DampedPendulum and DecaySystem together
+- Maintain consistency: all SymbolicMixin systems have equivalent test coverage
+
+**Rationale:**
+- DampedPendulum symbolic support already planned for Phase 2A extension (~30 min)
+- More efficient to add both test suites together than piecemeal
+- DecaySystem functional tests complete (test_systems.py) - core functionality validated
+- Symbolic tests validate SymbolicMixin integration, not ODE correctness
+
+---
+
 ## Reflections
 
 ### What Went Well

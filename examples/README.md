@@ -18,7 +18,11 @@
   - Biologically relevant parameters (b=0.5 N·m·s/rad, human limb scale)
   - Demonstrates damped oscillation to equilibrium
 
-**Outputs:** 7 plots saved to `examples/output/`
+- **Decay System**
+  - Exponential decay (λ=1.0) with analytic solution overlay
+  - Validates 1D time-series plotter and numerical accuracy
+
+**Outputs:** 8 plots saved to `examples/output/`
 
 **Usage:**
 ```bash
@@ -31,7 +35,7 @@ python examples/validate_plotting.py
 
 Pre-generated visualization outputs demonstrating solver and plotting architecture. These PNG files are **tracked in git** for documentation and demonstration purposes.
 
-### Tracked Outputs (7 files)
+### Tracked Outputs (8 files)
 
 **Lorenz System:**
 - `lorenz_chaotic_3d.png` - 3D butterfly attractor
@@ -44,12 +48,15 @@ Pre-generated visualization outputs demonstrating solver and plotting architectu
 **Damped Pendulum:**
 - `pendulum.png` - Phase portrait showing damped spiral to equilibrium
 
+**Decay System:**
+- `decay.png` - 1D time-series with analytic solution comparison
+
 ### Note on Binary Files
 
 These PNG files are tracked in git to provide visual documentation of expected output. They demonstrate:
 - Correct solver behavior across different dynamical regimes
-- Factory pattern automatically selecting 2D vs 3D plotters
-- Strategy pattern extensibility for visualization
+- Factory pattern automatically selecting 1D/2D/3D plotters based on dimensionality
+- Strategy pattern extensibility for visualization types (time-series vs phase portraits)
 
 If regenerating plots frequently becomes an issue, consider moving to external documentation hosting.
 

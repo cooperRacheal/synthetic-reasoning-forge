@@ -3,6 +3,7 @@ import pytest
 from numpy.typing import NDArray
 
 from src.logic.systems.blow_up_system import BlowUpSystem
+from src.logic.systems.decay import DecaySystem
 from src.logic.systems.lorenz import LorenzSystem
 from src.logic.systems.pendulum import DampedPendulum
 
@@ -12,30 +13,35 @@ def lorenz_system() -> LorenzSystem:
     """Fixture: Lorenz system textbook defaults."""
     return LorenzSystem(sigma=10.0, rho=28.0, beta=8 / 3)
 
-
 @pytest.fixture
 def pendulum_system() -> DampedPendulum:
     """Fixture: Damped pendulum system textbook defaults."""
     return DampedPendulum(length=1.0, damping=0.2, mass=1.0, gravity=9.81)
 
+@pytest.fixture
+def decay_system() -> DecaySystem:
+    """Fixture: Decay system with default lambda=1.0."""
+    return DecaySystem(lambda_=1.0)
+
+@pytest.fixture
+def decay_ic() -> NDArray[np.float64]:
+    """Fixture: Initial condition for decay system (x0=5.0)."""
+    return np.array([5.0])
 
 @pytest.fixture
 def blowup_system() -> BlowUpSystem:
     """Fixture: Blow-up system for error handling tests."""
     return BlowUpSystem()
 
-
 @pytest.fixture
 def default_t_span() -> tuple[float, float]:
     """Fixture: Default time span for integration."""
     return (0.0, 10.0)
 
-
 @pytest.fixture
 def lorenz_ic() -> NDArray[np.float64]:
     """Fixture: Initial condition for Lorenz system."""
     return np.array([1.0, 1.0, 1.0])
-
 
 @pytest.fixture
 def pendulum_ic() -> NDArray[np.float64]:
@@ -43,12 +49,10 @@ def pendulum_ic() -> NDArray[np.float64]:
     omega = 0)."""
     return np.array([np.pi / 4, 0.0])
 
-
 @pytest.fixture
 def blowup_ic() -> NDArray[np.float64]:
     """Fixture: Initial conditions for blow-up system."""
     return np.array([1.0])
-
 
 @pytest.fixture
 def synthetic_2d_trajectory() -> tuple[NDArray[np.float64], NDArray[np.float64]]:
@@ -57,10 +61,16 @@ def synthetic_2d_trajectory() -> tuple[NDArray[np.float64], NDArray[np.float64]]
     y = np.array([np.sin(t), np.cos(t)])  # shape (2, 100)
     return t, y
 
-
 @pytest.fixture
 def synthetic_3d_trajectory() -> tuple[NDArray[np.float64], NDArray[np.float64]]:
     """Fixture: Synthetic 3D trajectory for plotting tests."""
     t = np.linspace(0, 10, 100)
     y = np.array([np.sin(t), np.cos(t), t / 10])  # shape (3, 100)
+    return t, y
+
+@pytest.fixture
+def synthetic_1d_trajectory() -> tuple[NDArray[np.float64], NDArray[np.float64]]:
+    """Fixture: Synthetic 1D trajectory for plotting tests."""
+    t = np.linspace(0, 10, 100)
+    y = np.array([np.exp(-0.5 * t)]) # shape (1, 100) - exponential decay
     return t, y

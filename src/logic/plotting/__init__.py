@@ -2,17 +2,17 @@
 
 This module provides extensible visualization for dynamical systems using
 the Strategy pattern. New visualization types can be added by implementing
-the PhasePortraitPlotter interface and registering with PlotterFactory.
+the ODEPlotter interface and registering with PlotterFactory.
 
 Architecture
 ------------
-- Strategy Pattern: PhasePortraitPlotter ABC defines interface
+- Strategy Pattern: ODEPlotter ABC defines interface
 - Factory Pattern: PlotterFactory selects plotter based on dimensionality
 - Open/Closed: Add plotters based on dimension without modifying existing code
 
 Public API
 ----------
-plot_phase_portrait : function
+plot_ode : function
     Main entry point - automatically selects appropriate plotter
 PlotConfig : dataclass
     Configuration for plot styling
@@ -20,7 +20,7 @@ PlotterFactory : class
     For advanced usage - register custom plotters
 PlotterNotFoundError: exception
     Raised when no plotter exists for dimensionality
-PhasePortraitPlotter: ABC
+ODEPlotter: ABC
     Base class for implementing custom plotters
 
 
@@ -30,13 +30,13 @@ Basic usage with solver integration:
 
 >>> from src.logic.solver import solve_ode
 >>> from src.logic.systems.lorenz import LorenzSystem
->>> from src.logic.plotting import plot_phase_portrait, PlotConfig
+>>> from src.logic.plotting import plot_ode, PlotConfig
 >>>
 >>> system = LorenzSystem()
 >>> sol = solve_ode(system, (0, 50), [1.0, 0.0, 0.0])
 >>>
 >>> config = PlotConfig(figsize=(12, 10), dpi=150)
->>> fig = plot_phase_portrait(
+>>> fig = plot_ode(
 ...     sol.t, sol.y,
 ...     labels=['x', 'y', 'z'],
 ...     title='Lorenz Attractor',
@@ -46,7 +46,7 @@ Basic usage with solver integration:
 
 Register custom plotter: 
 
->>> class MyCustomPlotter(PhasePortraitPlotter):
+>>> class MyCustomPlotter(ODEPlotter):
 ...     def plot(self, t, y, **kwargs):
 ...         #Custom visualization logic
 ...         pass
@@ -58,12 +58,12 @@ import matplotlib.pyplot as plt
 import numpy as np
 from numpy.typing import NDArray
 
-from src.logic.plotting.base import PhasePortraitPlotter
+from src.logic.plotting.base import ODEPlotter
 from src.logic.plotting.config import PlotConfig
 from src.logic.plotting.factory import PlotterFactory, PlotterNotFoundError
 
 
-def plot_phase_portrait(
+def plot_ode(
     t: NDArray[np.float64],
     y: NDArray[np.float64],
     labels: list[str] | None = None,
@@ -71,10 +71,10 @@ def plot_phase_portrait(
     config: PlotConfig | None = None,
     save_path: str | None = None,
 ) -> plt.Figure:
-    """Plot phase portrait for ODE solution.
+    """Plot ODE solution trajectory.
 
     Automatically selects appropriate plotter based on state dimensionality.
-    Supports 2D and 3D systems. For higher dimensions, use projection techniques
+    Supports 1D, 2D, and 3D systems. For higher dimensions, use projection techniques
     or register custom plotters.
 
     This is the main entry point for the plotting API. Users should call this
@@ -112,19 +112,19 @@ def plot_phase_portrait(
     >>> from src.logic.systems.pendulum import DampedPendulum
     >>> pendulum = DampedPendulum()
     >>> sol = solve_ode(pendulum, (0, 20), [np.pi/4, 0.0])
-    >>> plot_phase_portrait(sol.t, sol.y, labels=['theta', 'omega'], title='Pendulum')
+    >>> plot_ode(sol.t, sol.y, labels=['theta', 'omega'], title='Pendulum')
 
     3D (Lorenz attractor):
 
     >>> from src.logic.systems.lorenz import LorenzSystem
     >>> lorenz = LorenzSystem()
     >>> sol = solve_ode(lorenz, (0, 50), [1.0, 0.0, 0.0])
-    >>> plot_phase_portrait(sol.t, sol.y, labels=['x', 'y', 'z'], title='Lorenz')
+    >>> plot_ode(sol.t, sol.y, labels=['x', 'y', 'z'], title='Lorenz')
 
     With custom configuration:
 
     >>> config = PlotConfig(figsize=(14, 10), dpi=200, line_width=2.0)
-    >>> plot_phase_portrait(sol.t, sol.y, config=config, save_path='output.png')
+    >>> plot_ode(sol.t, sol.y, config=config, save_path='output.png')
     """
 
     n_dim = y.shape[0]
@@ -136,9 +136,9 @@ def plot_phase_portrait(
 
 # Public API exports
 __all__ = [
-    "plot_phase_portrait",
+    "plot_ode",
     "PlotConfig",
     "PlotterFactory",
-    "PhasePortraitPlotter",
+    "ODEPlotter",
     "PlotterNotFoundError",
 ]
