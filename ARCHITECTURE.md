@@ -1259,3 +1259,86 @@ theorem decay_picard_specific :
 
 ---
 
+### ADR #17: Phase 2B/2C Deferral - Learning-First Pivot
+
+**Date:** 2026-01-21 (Day 10, retrospective documentation per Phase Boundaries protocol)
+**Status:** Accepted
+**Context:** Sprint planning adjustment, Phase 2B/2C (JSON bridge) deferred in favor of Phase 3A (Lean learning)
+
+**Decision:** Defer Phase 2B (JSON serialization) and Phase 2C (LeanProofRequest API) until after completing Phase 3A (first Lean proof).
+
+**Timeline:**
+- Original plan (Day 7): Phase 1 → Phase 2A/2B/2C → Phase 3
+- Actual execution (Days 7-9): Phase 1 → Phase 2A → **Phase 3A** → Phase 2B/2C (deferred)
+
+**Problem:**
+- Phase 2B/2C design requires knowing WHAT to serialize for Lean consumption
+- Without Lean proof experience, JSON schema would be speculative
+- Risk: Build bridge to nowhere (design Phase 2C API before understanding Lean requirements)
+
+**Alternatives Considered:**
+
+1. **Original sequence** (Phase 2B/2C before Phase 3A)
+   - Pro: Follows linear dependency (bridge before using it)
+   - Con: Design JSON schema without knowing Lean needs
+   - Con: Risk of rework after Phase 3A learnings
+
+2. **Learning-first pivot** (Phase 3A before Phase 2B/2C) [CHOSEN]
+   - Pro: Lean proof informs JSON schema design
+   - Pro: Validates feasibility before bridge investment
+   - Pro: Concrete requirements from Phase 3A experience
+   - Con: Non-linear progression, schedule impact
+
+3. **Parallel execution** (Phase 2B/2C and Phase 3A simultaneously)
+   - Pro: No schedule delay
+   - Con: High cognitive load, context-switching overhead
+   - Con: Still risk of rework if approaches misaligned
+
+**Choice:** Alternative 2 (Learning-first pivot)
+
+**Rationale:**
+- **Validates feasibility:** Phase 3A proves Lean formal verification is possible (10-11 hrs, complete Picard-Lindelöf proof)
+- **Informs design:** JSON schema now knows to serialize:
+  - System type (string identifier)
+  - Symbolic equations (SymPy → string conversion)
+  - Parameter values (Lipschitz constants L, K)
+  - Domain bounds (t0, t1 for interval)
+- **Prevents rework:** Phase 2B/2C can now be designed against concrete Phase 3A proof template
+- **Learning priority:** SELC principle - deep understanding over schedule adherence
+
+**Trade-offs Accepted:**
+- Sprint extension: Day 7 → Day 10+
+- Non-linear dependency order
+- Deferred technical debt (mypy errors, Phase 2B/2C implementation)
+
+**Learnings Applied to Phase 2B/2C Design:**
+
+From Phase 3A proof experience:
+
+1. **JSON must include Picard-Lindelöf parameters:**
+   - `L` (Lipschitz constant) - computed from max derivative
+   - `K` (norm bound) - computed from max RHS value
+   - Domain: `(t0, t1)` or interval size
+   - Initial condition: `(t0, x0)`
+
+2. **Proof template router needed:**
+   - Python sends `proof_type: "picard_lindelof"`
+   - Lean routes to appropriate theorem (decay, pendulum, Lorenz)
+   - See Improvement #2 (Proof Template Library) in Day 10 analysis
+
+3. **Fixed vs parametric proofs:**
+   - Phase 3A: Fixed interval `[-0.1, 0.1]` (concrete values)
+   - Phase 3B: Parametric generalization (any interval)
+   - JSON bridge requires Phase 3B completion
+
+**Impact on Schedule:**
+- Phase 2B: JSON serialization (2-3 hrs) - blocked on Phase 3B parametric proof
+- Phase 2C: LeanProofRequest API (3-4 hrs) - requires Phase 2B + Phase 3B
+- Integration tests: (2-3 hrs) - requires full chain
+
+**Status:** Phase 2B/2C deferred pending Phase 3B (parametric Lean proof generalization). Phase 3A validates approach feasibility (✅ complete).
+
+**Approval:** Documented retroactively (Day 10) per new Phase Boundaries protocol in CLAUDE.md
+
+---
+
