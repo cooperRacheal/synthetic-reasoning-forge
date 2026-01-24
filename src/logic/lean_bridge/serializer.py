@@ -7,11 +7,14 @@ verification.
 Enforces Phase 3A constraints (x0=5, t in [-0.1,0.1], lambda = 1).
 """
 
+from __future__ import annotations
+
 import json
-from typing import Any
+from typing import TYPE_CHECKING, Any
 from fractions import Fraction
 
-from src.logic.systems.decay import DecaySystem
+if TYPE_CHECKING:
+    from src.logic.systems.decay import DecaySystem
 
 def to_rational(value: float) -> dict[str, int]:
     """Convert float to rational JSON representation."""

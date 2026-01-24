@@ -73,6 +73,55 @@ class TestDecaySerializer:
         assert data["interval"]["tmax"] == {"num": 1, "den": 10}
         assert data["parameters"]["lambda"] == {"num": 1, "den": 1}
             
-            
+class TestLeanClient:
+    """Test Lean client integration."""
+    
+    def test_phase3a_verification_succeeds(
+        self, lean_client: LeanClient, phase3a_serializer: DecaySerializer
+    ) -> None: 
+        """Test that Phase 3A values verify successfully."""
+        json_input = phase3a_serializer.to_json(
+            t0=0.0, x0=5.0, tmin=-0.1, tmax=0.1
+        )
+        result = lean_client.verify_decay(json_input)
+        assert result.success
+        assert result.error_code is None
+    
+    def test_wrong_t0_rejected(self, lean_client: LeanClient) -> None:
+        """Test that Lean rejects t0 != 0.0. for phase 3A."""            
+        bad_json = json.dumps({
+            "system_type": "decay",
+            "initial_condition": {"t0": {"num": 1, "den": 1}, "x0": {"num": 5, "den": 1}},
+            "interval": {"tmin": {"num": -1, "den": 10}, "tmax": {"num": 1, "den":  10}},
+            "parameters": {"lambda": {"num": 1, "den": 1}},
+        })
+        result = lean_client.verify_decay(bad_json)
+        assert not result.success
+        assert result.error_code == "VALIDATION_ERROR"
+        
+    def test_wrong_x0_rejected(self, lean_client: LeanClient) -> None:
+        """Test that Lean rejects x0 != 5.0 for phase 3A."""
+        bad_json = json.dumps({
+            "system_type": "decay",
+            "initial_condition": {"t0": {"num": 0, "den":1}, "x0": {"num": 1, "den": 1}},
+            "interval": {"tmin": {"num": -1, "den": 10}, "tmax": {"num": 1, "den": 10}},
+            "parameters": {"lambda": {"num": 1, "den": 1}}
+        })
+        result = lean_client.verify_decay(bad_json)
+        assert not result.success
+        assert result.error_code == "VALIDATION_ERROR"
 
+class TestEndToEnd:
+    """Test complete flow."""
 
+    def test_full_pipeline(
+        self, lean_client: LeanClient, phase3a_system: DecaySystem
+    ) -> None: 
+        """Test DecaySystem -> JSON -> Lean -> Result."""
+        serializer = DecaySerializer(phase3a_system)
+        json_input = serializer.to_json(t0=0.0, x0=5.0, tmin=-0.1, tmax=0.1)
+        result = lean_client.verify_decay(json_input)
+        assert result.success is True
+        assert result.error_code is None
+        assert result.details is not None # verifies Lean returns details
+        
